@@ -38,11 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'FirstHomeTask.about.apps.AboutConfig',
-    'FirstHomeTask.users.apps.UsersConfig',
-    'FirstHomeTask.homepage.apps.HomepageConfig',
-    'FirstHomeTask.rating.apps.RatingConfig',
-    'FirstHomeTask.catalog.apps.CatalogConfig',
+    'about.apps.AboutConfig',
+    'users.apps.UsersConfig',
+    'homepage.apps.HomepageConfig',
+    'rating.apps.RatingConfig',
+    'catalog.apps.CatalogConfig',
 
 ]
 
