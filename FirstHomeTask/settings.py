@@ -37,11 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'about', 
-    'homepage',
-    'catalog',
-    'users',
-    'rating'
+
+    'FirstHomeTask.apps.AboutConfig',
+    'FirstHomeTask.apps.UsersConfig',
+    'FirstHomeTask.apps.HomePageConfig',
+    'FirstHomeTask.apps.RatingConfig',
+    'FirstHomeTask.apps.CatalogConfig',
+
 ]
 
 MIDDLEWARE = [
