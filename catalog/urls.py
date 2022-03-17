@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 
-from catalog.views import *
+from catalog.views import item_list, item_detail
 
 urlpatterns = [
     path('', item_list),

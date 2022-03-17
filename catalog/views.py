@@ -9,5 +9,9 @@ def item_list(request) -> HttpResponse:
 
 
 def item_detail(request, item_index: int) -> HttpResponse:
-    # Не знаю, нужно ли выводить индекс элимена из строки (В условии задачи не было), но, мне кажется логичным
-    return HttpResponse(f'Подробно элемент "{item_index}"', status=HTTPStatus.OK)
+    # Не знаю, нужно ли выводить индекс элимена из строки
+    # (В условии задачи не было), но, мне кажется логичным
+
+    return HttpResponse(
+        f'Подробно элемент "{item_index}"', status=HTTPStatus.OK
+    )

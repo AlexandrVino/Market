@@ -9,8 +9,11 @@ def user_list(request) -> HttpResponse:
 
 
 def user_detail(request, user_id: int) -> HttpResponse:
-    # Не знаю, нужно ли выводить айдишник из строки (В условии задачи не было), но, мне кажется логичным
-    return HttpResponse(f'Информация о пользователе {user_id}', status=HTTPStatus.OK)
+    # Не знаю, нужно ли выводить айдишник из строки
+    # (В условии задачи не было), но, мне кажется логичным
+    return HttpResponse(
+        f'Информация о пользователе {user_id}', status=HTTPStatus.OK
+    )
 
 
 def signup(request) -> HttpResponse:
