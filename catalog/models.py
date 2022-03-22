@@ -16,6 +16,8 @@ class Tag(BaseSlug):
 
 class Category(BaseSlug):
     weight = models.IntegerField(default=100,
+                                 help_text='Максимум 32767',
+                                 verbose_name='Вес',
                                  validators=[MaxValueValidator(32767),
                                              MinValueValidator(1)])
 
@@ -28,13 +30,22 @@ class Category(BaseSlug):
 
 
 class Item(Base):
-    is_published = models.BooleanField(default=True)
-    name = models.CharField(max_length=150)
-    text = models.TextField(validators=[validate_catalog_text])
+    name = models.CharField(
+        max_length=150, verbose_name='Название',
+        help_text='Максимум 150 символов'
+    )
+
+    text = models.TextField(
+        validators=[validate_catalog_text],
+        verbose_name='Описание',
+        help_text='Минимум 2 слова, используйте "роскошно/превосходно"'
+    )
 
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING,
-                                 default=None)
-    tags = models.ManyToManyField(Tag, default=None)
+                                 default=None, verbose_name='Категория',
+                                 help_text='Категория товара')
+
+    tags = models.ManyToManyField(Tag, default=None, verbose_name='Тэги')
 
     def __str__(self):
         return self.name

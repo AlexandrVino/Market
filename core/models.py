@@ -4,7 +4,7 @@ from django.db import models
 
 class Base(models.Model):
     is_published = models.BooleanField(default=True,
-                                       help_text='Опубликовано ли ?')
+                                       verbose_name='Опубликовано')
 
     class Meta:
         abstract = True
@@ -13,7 +13,7 @@ class Base(models.Model):
 class BaseSlug(Base):
     slug = models.CharField(
         max_length=200, unique=True, validators=[validate_slug],
-        help_text='Максимум 200 символов')
+        help_text='Максимум 200 символов', verbose_name='Название')
 
     class Meta:
         abstract = True
