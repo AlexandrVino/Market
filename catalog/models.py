@@ -6,6 +6,10 @@ from core.models import Base, BaseSlug
 
 
 class Tag(BaseSlug):
+    """
+    Модель тэга для товаров
+    """
+
     def __str__(self):
         return self.slug
 
@@ -15,6 +19,10 @@ class Tag(BaseSlug):
 
 
 class Category(BaseSlug):
+    """
+    Модель категории товара
+    """
+
     weight = models.IntegerField(default=100,
                                  help_text='Максимум 32767',
                                  verbose_name='Вес',
@@ -30,6 +38,10 @@ class Category(BaseSlug):
 
 
 class Item(Base):
+    """
+    Модель товара
+    """
+
     name = models.CharField(
         max_length=150, verbose_name='Название',
         help_text='Максимум 150 символов'
@@ -41,7 +53,7 @@ class Item(Base):
         help_text='Минимум 2 слова, используйте "роскошно/превосходно"'
     )
 
-    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING,
+    category = models.ForeignKey(Category, on_delete=models.RESTRICT,
                                  default=None, verbose_name='Категория',
                                  help_text='Категория товара')
 

@@ -1,4 +1,3 @@
-from django.contrib import admin
 from django.urls import path
 
 from catalog.views import item_list, item_detail

@@ -3,6 +3,10 @@ from django.db import models
 
 
 class Base(models.Model):
+    """
+    Базовый абстрактный класс моделей
+    """
+
     is_published = models.BooleanField(default=True,
                                        verbose_name='Опубликовано')
 
@@ -11,6 +15,10 @@ class Base(models.Model):
 
 
 class BaseSlug(Base):
+    """
+    Базовый абстрактный класс моделей (вместе с полем слага)
+    """
+
     slug = models.CharField(
         max_length=200, unique=True, validators=[validate_slug],
         help_text='Максимум 200 символов', verbose_name='Название')

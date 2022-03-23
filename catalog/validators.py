@@ -2,6 +2,10 @@ from django.core.exceptions import ValidationError
 
 
 def validate_catalog_text(value: str) -> None:
+    """
+    Проыеряет корректность описание товара
+    """
+
     necessary_fields = ['роскошно', 'превосходно']
     value = value.lower()
 
@@ -12,4 +16,4 @@ def validate_catalog_text(value: str) -> None:
         )
 
     if len(value.split()) < 2:
-        raise ValidationError(f"Пожалуйста, используйте хотя бы 2 слова")
+        raise ValidationError("Пожалуйста, используйте хотя бы 2 слова")
