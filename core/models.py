@@ -19,8 +19,8 @@ class BaseSlug(Base):
     Базовый абстрактный класс моделей (вместе с полем слага)
     """
 
-    slug = models.CharField(
-        max_length=200, unique=True, validators=[validate_slug],
+    slug = models.SlugField(
+        max_length=200, unique=True,
         help_text='Максимум 200 символов', verbose_name='Название')
 
     class Meta:

@@ -10,13 +10,15 @@ class Rating(models.Model):
     Модель оценки товара
     """
 
+    # если удалили товар, то удаляем все его оценки
     item = models.ForeignKey(
-        Item, on_delete=models.DO_NOTHING, default=None,
+        Item, on_delete=models.CASCADE, default=None,
         help_text='Пожалуйста, укажите товар'
     )
 
+    # если удалили пользователя, то удаляем все его оценки
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, default=None)
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None)
 
     star = models.SmallIntegerField(
         blank=True, default=0, choices=(

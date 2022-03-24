@@ -22,12 +22,15 @@ class Category(BaseSlug):
     """
     Модель категории товара
     """
+    weight = models.PositiveSmallIntegerField(
+        default=100, help_text='Максимум 32767', verbose_name='Вес',
 
-    weight = models.IntegerField(default=100,
-                                 help_text='Максимум 32767',
-                                 verbose_name='Вес',
-                                 validators=[MaxValueValidator(32767),
-                                             MinValueValidator(1)])
+        # использую валидатор, т.к. в условии задачи > 0,
+        # а PositiveSmallIntegerField => (0, 32767)
+        # https://docs.djangoproject.com/en/4.0/ref/models/fields/#positivesmallintegerfield
+
+        validators=[MinValueValidator(1)]
+    )
 
     def __str__(self):
         return self.slug
