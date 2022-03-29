@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Стандартный заголовок{% endblock %}</title>
+</head>
+<body>
+{% include "header.html" %}
+<main>
+    {% block content %}Стандартный контент{% endblock %}
+</main>
+{% include "footer.html" %}
+</body>
+</html>
