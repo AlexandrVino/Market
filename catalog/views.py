@@ -9,7 +9,7 @@ def item_list(request) -> HttpResponse:
     Возвращает страничку Списка товаров
     """
     return render(
-        request, 'catalog/list.html', status=HTTPStatus.OK, context={},
+        request, 'catalog/item_list.html', status=HTTPStatus.OK, context={},
         content_type='text/html'
     )
 
@@ -23,6 +23,6 @@ def item_detail(request, item_index: int) -> HttpResponse:
     # Но мне показалось логичным передавать айди товара
 
     return render(
-        request, 'catalog/detail.html', status=HTTPStatus.OK,
+        request, 'catalog/item_detail.html', status=HTTPStatus.OK,
         context={'item_index': item_index}, content_type='text/html'
     )
