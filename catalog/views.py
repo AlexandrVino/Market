@@ -25,9 +25,6 @@ def item_detail(request, item_index: int) -> HttpResponse:
     Возвращает страничку конкретного товара
     """
 
-    # В условии было сказано про то, что словарь контекста должен быть пустым
-    # Но мне показалось логичным передавать айди товара
-
     item = get_object_or_404(Item, id=item_index, is_published=True)
     return render(
         request, 'catalog/item_detail.html', status=HTTPStatus.OK,
