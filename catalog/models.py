@@ -10,6 +10,8 @@ class Tag(BaseSlug):
     Модель тэга для товаров
     """
 
+    name = models.CharField(max_length=150, default=None)
+
     def __str__(self):
         return self.slug
 
@@ -22,6 +24,9 @@ class Category(BaseSlug):
     """
     Модель категории товара
     """
+
+    name = models.CharField(max_length=150, default=None)
+
     weight = models.PositiveSmallIntegerField(
         default=100, help_text='Максимум 32767', verbose_name='Вес',
 
@@ -56,9 +61,10 @@ class Item(Base):
         help_text='Минимум 2 слова, используйте "роскошно/превосходно"'
     )
 
-    category = models.ForeignKey(Category, on_delete=models.RESTRICT,
-                                 default=None, verbose_name='Категория',
-                                 help_text='Категория товара')
+    category = models.ForeignKey(
+        Category, on_delete=models.RESTRICT, default=None,
+        verbose_name='Категория', help_text='Категория товара'
+    )
 
     tags = models.ManyToManyField(Tag, default=None, verbose_name='Тэги')
 

@@ -1,7 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Подробное описание товара {{ item_index }}{% endblock %}
+{% block title %}Подробное описание товара {{ item.name }}{% endblock %}
 
 {% block content %}
-  <h1>Подробное описание товара {{ item_index }}</h1>
+  <h1>Подробное описание товара <i>"{{ item.name }}"</i></h1>
+  <div>
+
+    {% include "item.html" %}
+  <div>
+    <span>Категория: </span>
+    {{ item.category.name }}
+  </div>
+
+  </div>
 {% endblock %}

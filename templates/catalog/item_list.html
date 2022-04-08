@@ -4,4 +4,9 @@
 
 {% block content %}
   <h1>Список товаров</h1>
+  {% for item in items %}
+    {% include "item.html" %}
+  {% empty %}
+    <p>Список пуст. Эй, админ, добавь инфы!</p>
+  {% endfor %}
 {% endblock %}

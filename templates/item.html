@@ -1,0 +1,15 @@
+<div>
+
+  <h3>{{ item.name }}</h3>
+  <p>{{ item.text|slice:":10" }}...</p>
+
+  <div>
+    <span>Теги: </span>
+    {% for item_tag in item.tags.all %}
+      {{ item_tag.name }};
+    {% empty %}
+      <p>У товара нет тегов</p>
+    {% endfor %}
+  </div>
+
+</div>
