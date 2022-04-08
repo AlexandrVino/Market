@@ -13,10 +13,11 @@ def home(request) -> HttpResponse:
     Возвращает главную страничку сайта
     """
 
-    items = Item.objects.filter(
-        is_published=True,
-        pk__in=sample(list(Item.objects.all().values_list('id', flat=True)),
-                      3)).prefetch_related('tags').only('name', 'text', 'tags')
+    items = Item.join_tags(
+        Item.filter(Item.get_all(), is_published=True,
+                    pk__in=sample(
+                        list(Item.get_all().values_list('id', flat=True)), 3)
+                    ), 'name', 'text', 'tags')
 
     return render(
         request, 'homepage/home.html', status=HTTPStatus.OK,

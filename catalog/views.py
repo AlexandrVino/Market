@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from django.shortcuts import get_object_or_404, render
 
-from catalog.models import Item, Tag
+from catalog.models import Category, Item, Tag
 
 
 def item_list(request) -> HttpResponse:
@@ -11,12 +11,13 @@ def item_list(request) -> HttpResponse:
     Возвращает страничку Списка товаров
     """
 
-    items = Item.objects.all().prefetch_related('tags')\
-        .only('name', 'text', 'tags')
+    items = Item.join_tags(Item.get_all(), 'name', 'text', 'tags')
+    categories = Category.sorted(Category.join_items(
+        Category.filter(Category.get_all(), item__in=items)))
 
     return render(
         request, 'catalog/item_list.html', status=HTTPStatus.OK,
-        context={'items': items}, content_type='text/html'
+        context={'categories': categories}, content_type='text/html'
     )
 
 

@@ -4,8 +4,12 @@
 
 {% block content %}
   <h1>Список товаров</h1>
-  {% for item in items %}
-    {% include "item.html" %}
+  {% for category in categories %}
+    <h3>{{ category.name }}</h3>
+    {% for item in category.item_set.all %}
+      {% include "item.html" %}
+    {% endfor %}
+
   {% empty %}
     <p>Список пуст. Эй, админ, добавь инфы!</p>
   {% endfor %}
