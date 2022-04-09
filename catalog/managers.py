@@ -10,7 +10,8 @@ class ItemsManager(BaseManager):
             category__is_published=True).prefetch_related(
             Prefetch(
                 'tags',
-                queryset=model.manager.filter(**kwargs))).only(*args)
+                queryset=model.manager.filter(**kwargs).only('name'))).only(
+            *args)
 
     def join_tags(self, model, items=None, *args, **kwargs):
         if items is None:
@@ -19,8 +20,8 @@ class ItemsManager(BaseManager):
         return items.select_related('category').prefetch_related(
             Prefetch(
                 'tags',
-                queryset=model.manager.filter(is_published=True))).only(
-            *args)
+                queryset=model.manager.filter(is_published=True).only(
+                    'name'))).only(*args)
 
 
 class CategoriesManager(BaseManager):

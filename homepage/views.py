@@ -1,7 +1,6 @@
 from http import HTTPStatus
 from random import sample
 
-from django.db.models import Prefetch
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -16,20 +15,28 @@ def home(request) -> HttpResponse:
     Возвращает главную страничку сайта
     """
 
-    ides = list(Item.objects.filter(is_published=True)
-                .values_list('id', flat=True))
+    ides = list(Item.manager.get_objects_with_filter(
+        is_published=True).values_list('id', flat=True))
 
     if len(ides) > ITEMS_COUNT:
         ides = sample(ides, ITEMS_COUNT)
 
-    items = Item.objects.filter(
-        is_published=True,
-        pk__in=ides).prefetch_related(
-        Prefetch('tags', queryset=Tag.objects.filter(is_published=True)))\
-        .only('name', 'text', 'tags__name')
+    items = Item.manager.join_tags(Tag, None, 'name', 'text', 'tags__name',
+                                   'category',
+                                   is_published=True, pk__in=ides)
+    data = {}
+
+    for item in items:
+
+        if not item.category.is_published:
+            continue
+
+        if data.get(item.category) is None:
+            data[item.category] = []
+        data[item.category].append(item)
 
     return render(
         request, HOMEPAGE_TEMPLATE, status=HTTPStatus.OK,
-        context={'items': items},
+        context={'data': data},
         content_type='text/html'
     )

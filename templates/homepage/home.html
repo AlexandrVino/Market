@@ -5,8 +5,12 @@
 {% block content %}
   <h1>Главная страница</h1>
   <h2>Мы рекомендуем: </h2>
-  {% for item in items %}
-    {% include "includes/item.html" %}
+  {% for category_name, items in data.items %}
+    <h3>{{ category_name }}</h3>
+    {% for item in items %}
+      {% include "includes/item.html" %}
+    {% endfor %}
+
   {% empty %}
     <p>Список пуст. Эй, админ, добавь инфы!</p>
   {% endfor %}

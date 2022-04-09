@@ -15,7 +15,7 @@ def item_list(request) -> HttpResponse:
     """
 
     items = Item.manager.join_tags(
-        Tag, None, 'name', 'text', 'tags', 'category', is_published=True)
+        Tag, None, 'name', 'text', 'tags__name', 'category', is_published=True)
 
     data = {}
 
