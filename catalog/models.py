@@ -1,8 +1,9 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import QuerySet
 
+from catalog.managers import CategoriesManager, ItemsManager
 from catalog.validators import validate_catalog_text
+from core.managers import BaseManager
 from core.models import Base, BaseSlug
 
 
@@ -10,6 +11,8 @@ class Tag(BaseSlug):
     """
     Модель тэга для товаров
     """
+
+    manager = BaseManager()
 
     name = models.CharField(max_length=150, default=None)
 
@@ -26,6 +29,8 @@ class Category(BaseSlug):
     Модель категории товара
     """
 
+    manager = CategoriesManager()
+
     name = models.CharField(max_length=150, default=None)
 
     weight = models.PositiveSmallIntegerField(
@@ -37,22 +42,6 @@ class Category(BaseSlug):
 
         validators=[MinValueValidator(1)]
     )
-
-    @staticmethod
-    def get_all() -> QuerySet:
-        return Category.objects.all()
-
-    @staticmethod
-    def filter(categories: QuerySet, **kwargs) -> QuerySet:
-        return categories.filter(**kwargs)
-
-    @staticmethod
-    def join_items(categories: QuerySet, *fields) -> QuerySet:
-        return categories.prefetch_related('item_set').only(*fields)
-
-    @staticmethod
-    def sorted(categories: QuerySet) -> list:
-        return sorted(categories, key=lambda x: x.weight)
 
     def __str__(self):
         return self.slug
@@ -66,6 +55,8 @@ class Item(Base):
     """
     Модель товара
     """
+
+    manager = ItemsManager()
 
     name = models.CharField(
         max_length=150, verbose_name='Название',
@@ -84,18 +75,6 @@ class Item(Base):
     )
 
     tags = models.ManyToManyField(Tag, default=None, verbose_name='Тэги')
-
-    @staticmethod
-    def get_all() -> QuerySet:
-        return Item.objects.all()
-
-    @staticmethod
-    def filter(items: QuerySet, **kwargs) -> QuerySet:
-        return items.filter(**kwargs)
-
-    @staticmethod
-    def join_tags(items: QuerySet, *fields) -> QuerySet:
-        return items.prefetch_related('tags').only(*fields)
 
     def __str__(self):
         return self.name
