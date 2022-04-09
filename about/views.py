@@ -3,6 +3,8 @@ from http import HTTPStatus
 from django.http import HttpResponse
 from django.shortcuts import render
 
+ABOUT_TEMPLATE = 'about/description.html'
+
 
 def description(request) -> HttpResponse:
     """
@@ -10,6 +12,6 @@ def description(request) -> HttpResponse:
     """
 
     return render(
-        request, 'about/description.html', status=HTTPStatus.OK, context={},
+        request, ABOUT_TEMPLATE, status=HTTPStatus.OK, context={},
         content_type='text/html'
     )
