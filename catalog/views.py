@@ -16,8 +16,8 @@ def item_list(request) -> HttpResponse:
     """
 
     items = Item.objects.filter(is_published=True).prefetch_related(
-        Prefetch('tags', queryset=Tag.objects.filter(is_published=True))).only(
-        'name', 'text', 'tags__name')
+        Prefetch('tags', queryset=Tag.objects.filter(is_published=True).only(
+            'name'))).only('name', 'text', 'tags__name')
 
     return render(
         request, ALL_ITEMS_TEMPLATE, status=HTTPStatus.OK,
@@ -34,8 +34,8 @@ def item_detail(request, item_index: int) -> HttpResponse:
         Item.objects.select_related('category').filter(
             category__is_published=True).prefetch_related(
             Prefetch(
-                'tags', queryset=Tag.objects.filter(is_published=True))).only(
-            'name', 'text', 'tags', 'category'),
+                'tags', queryset=Tag.objects.filter(is_published=True).only(
+                    'name'))).only('name', 'text', 'tags', 'category'),
         id=item_index, is_published=True)
 
     return render(

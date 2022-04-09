@@ -25,8 +25,9 @@ def home(request) -> HttpResponse:
     items = Item.objects.filter(
         is_published=True,
         pk__in=ides).prefetch_related(
-        Prefetch('tags', queryset=Tag.objects.filter(is_published=True)))\
-        .only('name', 'text', 'tags__name')
+        Prefetch('tags',
+                 queryset=Tag.objects.filter(is_published=True).only(
+                     'name'))).only('name', 'text', 'tags__name')
 
     return render(
         request, HOMEPAGE_TEMPLATE, status=HTTPStatus.OK,
