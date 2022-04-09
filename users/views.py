@@ -3,13 +3,18 @@ from http import HTTPStatus
 from django.http import HttpResponse
 from django.shortcuts import render
 
+USER_LIST_TEMPLATE = 'users/user_list.html'
+CUR_USER_TEMPLATE = 'users/user_detail.html'
+SIGNUP_TEMPLATE = 'users/signup.html'
+PROFILE_TEMPLATE = 'users/profile.html'
+
 
 def user_list(request) -> HttpResponse:
     """
     Возвращает страничку Списка пользователей
     """
     return render(
-        request, 'users/user_list.html', status=HTTPStatus.OK, context={},
+        request, USER_LIST_TEMPLATE, status=HTTPStatus.OK, context={},
         content_type='text/html'
     )
 
@@ -23,7 +28,7 @@ def user_detail(request, user_id: int) -> HttpResponse:
     # Но мне показалось логичным передавать айди пользователя
 
     return render(
-        request, 'users/user_detail.html', status=HTTPStatus.OK,
+        request, CUR_USER_TEMPLATE, status=HTTPStatus.OK,
         context={'user_id': user_id}, content_type='text/html'
     )
 
@@ -34,7 +39,7 @@ def signup(request) -> HttpResponse:
     """
 
     return render(
-        request, 'users/signup.html', status=HTTPStatus.OK, context={},
+        request, SIGNUP_TEMPLATE, status=HTTPStatus.OK, context={},
         content_type='text/html'
     )
 
@@ -45,6 +50,6 @@ def profile(request) -> HttpResponse:
     """
 
     return render(
-        request, 'users/profile.html', status=HTTPStatus.OK, context={},
+        request, PROFILE_TEMPLATE, status=HTTPStatus.OK, context={},
         content_type='text/html'
     )
