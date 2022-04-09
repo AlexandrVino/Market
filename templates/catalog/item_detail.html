@@ -6,11 +6,23 @@
   <h1>Подробное описание товара <i>"{{ item.name }}"</i></h1>
   <div>
 
-    {% include "item.html" %}
-  <div>
-    <span>Категория: </span>
-    {{ item.category.name }}
-  </div>
+    <h3>{{ item.name }}</h3>
+    <div>
+      <span>Категория: </span>
+      {{ item.category.name }}
+    </div>
+
+    <p>{{ item.text|truncatewords:10 }}</p>
+
+    <div>
+      <span>Теги: </span>
+      {% for item_tag in tags %}
+        {{ item_tag.name }};
+      {% empty %}
+        <p>У товара нет тегов</p>
+      {% endfor %}
+    </div>
+
 
   </div>
 {% endblock %}

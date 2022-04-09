@@ -1,8 +1,7 @@
-from django.contrib import admin
-from django.templatetags.static import static
-from django.urls import path, include
-
 import mimetypes
+
+from django.contrib import admin
+from django.urls import include, path
 
 mimetypes.add_type("application/javascript", ".js", True)
 

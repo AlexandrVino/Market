@@ -6,7 +6,7 @@
   <h1>Главная страница</h1>
   <h2>Мы рекомендуем: </h2>
   {% for item in items %}
-    {% include "item.html" %}
+    {% include "includes/item.html" %}
   {% empty %}
     <p>Список пуст. Эй, админ, добавь инфы!</p>
   {% endfor %}
