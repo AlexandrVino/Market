@@ -16,8 +16,8 @@ def item_list(request) -> HttpResponse:
     """
 
     items = Item.objects.filter(is_published=True).prefetch_related(
-        Prefetch('tags', queryset=Tag.objects.filter(is_published=True)))\
-        .only('name', 'text', 'tags__name')
+        Prefetch('tags', queryset=Tag.objects.filter(is_published=True))).only(
+        'name', 'text', 'tags__name')
 
     return render(
         request, ALL_ITEMS_TEMPLATE, status=HTTPStatus.OK,
@@ -30,10 +30,15 @@ def item_detail(request, item_index: int) -> HttpResponse:
     Возвращает страничку конкретного товара
     """
 
-    item = get_object_or_404(Item, id=item_index, is_published=True)
-    tags = item.tags.filter(is_published=True).only('name')
+    item = get_object_or_404(
+        Item.objects.select_related('category').filter(
+            category__is_published=True).prefetch_related(
+            Prefetch(
+                'tags', queryset=Tag.objects.filter(is_published=True))).only(
+            'name', 'text', 'tags', 'category'),
+        id=item_index, is_published=True)
 
     return render(
         request, CUR_ITEM_TEMPLATE, status=HTTPStatus.OK,
-        context={'item': item, 'tags': tags}, content_type='text/html'
+        context={'item': item}, content_type='text/html'
     )

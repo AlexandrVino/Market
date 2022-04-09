@@ -16,7 +16,7 @@
 
     <div>
       <span>Теги: </span>
-      {% for item_tag in tags %}
+      {% for item_tag in item.tags.all %}
         {{ item_tag.name }};
       {% empty %}
         <p>У товара нет тегов</p>
