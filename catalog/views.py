@@ -15,19 +15,14 @@ def item_list(request) -> HttpResponse:
     """
 
     items = Item.manager.join_tags(
-        Tag, None, 'name', 'text', 'tags__name', 'category__is_published',
+        Tag, None, 'name', 'text', 'tags__name',
         'category__name', is_published=True)
     data = {}
 
     for item in items:
-
-        if not item.category.is_published:
-            continue
-
         if data.get(item.category.name) is None:
             data[item.category.name] = []
         data[item.category.name].append(item)
-
     return render(
         request, ALL_ITEMS_TEMPLATE, status=HTTPStatus.OK,
         context={'categories': data}, content_type='text/html'

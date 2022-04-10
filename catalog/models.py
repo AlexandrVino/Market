@@ -47,6 +47,7 @@ class Category(BaseSlug):
         return self.slug
 
     class Meta:
+        ordering = ['weight', 'name']
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 

@@ -17,7 +17,8 @@ class ItemsManager(BaseManager):
         if items is None:
             items = self.get_objects_with_filter(**kwargs)
 
-        return items.select_related('category').prefetch_related(
+        return items.select_related('category').filter(
+            category__is_published=True).order_by('category').prefetch_related(
             Prefetch(
                 'tags',
                 queryset=model.manager.filter(is_published=True).only(

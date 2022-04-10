@@ -22,14 +22,11 @@ def home(request) -> HttpResponse:
         ides = sample(ides, ITEMS_COUNT)
 
     items = Item.manager.join_tags(
-        Tag, None, 'name', 'text', 'tags__name', 'category__is_published',
+        Tag, None, 'name', 'text', 'tags__name',
         'category__name', is_published=True, pk__in=ides)
     data = {}
 
     for item in items:
-
-        if not item.category.is_published:
-            continue
 
         if data.get(item.category.name) is None:
             data[item.category.name] = []
