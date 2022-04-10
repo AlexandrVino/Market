@@ -30,13 +30,11 @@ def item_detail(request, item_index: int) -> HttpResponse:
     Возвращает страничку конкретного товара
     """
 
-    item = get_object_or_404(
-        Item.objects.select_related('category').filter(
-            category__is_published=True).prefetch_related(
-            Prefetch(
-                'tags', queryset=Tag.objects.filter(is_published=True).only(
-                    'name'))).only('name', 'text', 'tags', 'category'),
-        id=item_index, is_published=True)
+    item = get_object_or_404(Item.objects.select_related('category').filter(
+        category__is_published=True).only('name', 'text',
+                                          'category__name').prefetch_related(
+        Prefetch('tags', queryset=Tag.objects.filter(is_published=True).only(
+            'name'))), id=item_index, is_published=True)
 
     return render(
         request, CUR_ITEM_TEMPLATE, status=HTTPStatus.OK,
