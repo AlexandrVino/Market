@@ -41,7 +41,7 @@ def item_detail(request, item_index: int) -> HttpResponse:
 
     item = get_object_or_404(
         Item.manager.join_tag(
-            Tag, 'name', 'text', 'tags', 'category', is_published=True),
+            Tag, 'name', 'text', 'tags__name', 'category__name', is_published=True),
         id=item_index, is_published=True)
 
     return render(
