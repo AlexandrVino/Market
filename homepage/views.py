@@ -21,9 +21,9 @@ def home(request) -> HttpResponse:
     if len(ides) > ITEMS_COUNT:
         ides = sample(ides, ITEMS_COUNT)
 
-    items = Item.manager.join_tags(Tag, None, 'name', 'text', 'tags__name',
-                                   'category',
-                                   is_published=True, pk__in=ides)
+    items = Item.manager.join_tags(
+        Tag, None, 'name', 'text', 'tags__name', 'category__is_published',
+        'category__name', is_published=True, pk__in=ides)
     data = {}
 
     for item in items:
@@ -31,9 +31,9 @@ def home(request) -> HttpResponse:
         if not item.category.is_published:
             continue
 
-        if data.get(item.category) is None:
-            data[item.category] = []
-        data[item.category].append(item)
+        if data.get(item.category.name) is None:
+            data[item.category.name] = []
+        data[item.category.name].append(item)
 
     return render(
         request, HOMEPAGE_TEMPLATE, status=HTTPStatus.OK,
