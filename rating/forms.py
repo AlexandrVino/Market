@@ -4,7 +4,6 @@ from rating.models import Rating
 
 
 class AddRate(forms.ModelForm):
-
     star = forms.ChoiceField(
         choices=(
             (1, 'Ненависть'), (2, 'Неприязнь'), (3, 'Нейтрально'),
@@ -17,8 +16,7 @@ class AddRate(forms.ModelForm):
 
     class Meta:
         model = Rating
-        fields = ('star', )
+        fields = ('star',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-

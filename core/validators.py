@@ -31,9 +31,8 @@ def validate_fields(value: str) -> None:
 
     if not (all([item in all_symbols for item in value]) and
             set(letters).intersection(set(value))):
-
         raise ValidationError(
-            f"Разрешено использовать латинские буквы, цифры и символы -_"
+            "Разрешено использовать латинские буквы, цифры и символы -_"
         )
 
 
@@ -48,7 +47,6 @@ def validate_password(value: str) -> None:
 
     if not (set(numbers).intersection(set(value)),
             set(special_chars).intersection(set(value))):
-
         raise ValidationError(
-            f"Разрешено использовать латинские буквы, цифры и символы -_"
+            "Разрешено использовать латинские буквы, цифры и символы -_"
         )
