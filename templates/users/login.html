@@ -10,48 +10,35 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
         crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href={% static "css/login.css" %}>
-  <!--<script src="{% static "static/js/index.js" %}" type="text/javascript"></script>-->
-  <script src="../../static/js/index.js" type="text/javascript"></script>
-  <title>Регистрация</title>
+
+  <title>Вход</title>
 </head>
 <body class="bg-dark text-white" style="--bs-bg-opacity: 0.9;">
 
 <main class="form">
 
-  {% if errors %}
-    <script type="text/javascript">
-        alert('{{ errors }}')
-    </script>
-  {% endif %}
-
   <div class="form-wrapper bg-dark">
 
     <form style="padding: 20px;" method="post">
       {% csrf_token %}
-      <h1 class="h3 mb-3 fw-normal">Please sign up</h1>
+      <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
       <div class="form-floating ">
         {{ form_login.username }}
       </div>
-      <div class="form-floating ">
-        {{ form_login.email }}
-      </div>
       <div class="form-floating">
-        {{ form_login.password1 }}
-      </div>
-      <div class="form-floating">
-        {{ form_login.password2 }}
+        {{ form_login.password }}
       </div>
 
       <div class="checkbox mb-3">
-        <input type="checkbox" value="remember-me"> Remember me
+          <input type="checkbox" value="remember-me"> Remember me
       </div>
 
-      <div class="w-100 btn btn-lg btn-primary" id="submit">Sign up
-      </div>
+      <button class="w-100 btn btn-lg btn-primary" type="submit" >Sign in
+      </button>
       <div class="sign-link-wrapper">
-        <a href="http://127.0.0.1:8000/auth/login" class="sign-link">Do you already
-          have an account ?</a>
+        <a href="http://127.0.0.1:8000/auth/signup" class="sign-link">Don't you
+          have an account yet ?</a>
       </div>
       <p class="mt-5 mb-3 text-muted label-text">© 2017–2022</p>
     </form>

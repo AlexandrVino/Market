@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 
 from catalog.models import Item
+from rating.managers import RatingManager
 
 
 class Rating(models.Model):
@@ -14,6 +15,8 @@ class Rating(models.Model):
         Item, on_delete=models.CASCADE, default=None,
         help_text='Пожалуйста, укажите товар'
     )
+
+    manager = RatingManager()
 
     # если удалили пользователя, то удаляем все его оценки
     user = models.ForeignKey(

@@ -7,7 +7,7 @@ from django.shortcuts import render
 from catalog.models import Item, Tag
 
 HOMEPAGE_TEMPLATE = 'homepage/home.html'
-ITEMS_COUNT = 3
+ITEMS_COUNT = 4
 
 
 def home(request) -> HttpResponse:
@@ -24,16 +24,9 @@ def home(request) -> HttpResponse:
     items = Item.manager.join_tags(
         Tag, None, 'name', 'text', 'tags__name',
         'category__name', is_published=True, pk__in=ides)
-    data = {}
-
-    for item in items:
-
-        if data.get(item.category.name) is None:
-            data[item.category.name] = []
-        data[item.category.name].append(item)
 
     return render(
         request, HOMEPAGE_TEMPLATE, status=HTTPStatus.OK,
-        context={'data': data},
+        context={'items': items, 'range': range(len(items))},
         content_type='text/html'
     )

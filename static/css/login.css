@@ -1,0 +1,42 @@
+
+.form {
+    margin-top: 16%;
+}
+
+h1 {
+    text-align: center;
+}
+
+.form-wrapper {
+    width: 280px;
+    margin: auto;
+    border-radius: 10px
+}
+
+.input-field {
+    height: 40px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+.label-text {
+    margin-bottom: 0 !important;
+}
+
+.sign-link-wrapper {
+    max-width: 195px;
+    margin: 10px auto;
+}
+
+.sign-link {
+    color: #888;
+    font-size: 13px;
+    text-decoration: underline;
+}
+
+.sign-link:hover {
+    color: #fff;
+}

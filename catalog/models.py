@@ -2,9 +2,9 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from catalog.managers import CategoriesManager, ItemsManager
-from catalog.validators import validate_catalog_text
 from core.managers import BaseManager
 from core.models import Base, BaseSlug
+from core.validators import validate_catalog_text
 
 
 class Tag(BaseSlug):

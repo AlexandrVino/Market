@@ -1,0 +1,57 @@
+<div id="carouselControls" class="carousel carousel-dark slide"
+     data-bs-ride="carousel">
+
+  <div class="carousel-indicators">
+    {% for i in range %}
+
+      <button type="button" data-bs-target="#carouselControls"{% if i == 0 %}
+              class="active" aria-current="true"{% endif %}
+              data-bs-slide-to="{{ i }}"></button>
+
+    {% endfor %}
+
+  </div>
+
+  <div class="carousel-inner" id="carousel-inner">
+    {% for item in items %}
+
+      <div class="carousel-item{% if item == items.first %} active{% endif %}"
+           data-bs-interval="4000"
+           style="height: 280px; margin-bottom: 50px">
+        <a href="http://127.0.0.1:8000/catalog/{{ item.id }}"
+           style="text-decoration: none">
+          <div class="carousel-caption text-start text-white">
+            <h1>{{ item.name }}</h1>
+            <p>{{ item.text|truncatewords:10 }}</p>
+
+            <button type="button"
+                    class="btn btn-outline-danger">{{ item.category.name }}</button>
+            <div style="margin-top: 10px">
+              {% for item_tag in item.tags.all %}
+                <button type="button"
+                        class="btn btn-outline-light">{{ item_tag.name }}</button>
+              {% endfor %}
+            </div>
+
+
+          </div>
+        </a>
+
+      </div>
+
+    {% endfor %}
+  </div>
+
+  <button class="carousel-control-prev" type="button"
+          data-href-template="#carouselControls"
+          data-bs-target="#carouselControls" data-bs-slide="prev" id="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button"
+          data-href-template="#carouselControls"
+          data-bs-target="#carouselControls" data-bs-slide="next" id="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
