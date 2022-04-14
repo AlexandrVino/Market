@@ -22,7 +22,8 @@
           <p class="rating">Оценки отсутсвуют</p>
         {% endif %}
       </div>
-      <div style="display: flex; margin: auto 0; transition: 0.7s linear;" id="item_info">
+      <div style="display: flex; margin: auto 0; transition: 0.7s linear;"
+           id="item_info">
         <div style="margin-right: 20px">
           <p style="margin: 0; height: 38px; line-height: 38px">Категория: </p>
           <p style="margin: 10px 0 0 0; height: 38px; line-height: 38px">
@@ -49,12 +50,17 @@
       </div>
     </div>
 
-    <div class="form-wrapper bg-dark" style="right: 0; min-width: 280px; transition: 0.7s linear; position: absolute">
+    <div class="form-wrapper bg-dark"
+         style="right: 0; min-width: 290px; transition: 0.7s linear; position: absolute">
 
       <form style="padding: 20px;" method="post" id="rate_form">
         {% csrf_token %}
-        <h1 class="h3 mb-3 fw-normal">Add/Update Rate</h1>
 
+        <div style="display: flex">
+          <h1 class="h3 mb-3 fw-normal">Add/Update Rate</h1>
+          <button type="button" class="btn-close btn-close-white" id="close_button"
+                  aria-label="Close" style="height: 34px; margin-left: 10px"></button>
+        </div>
         <div class="form-floating ">
           {{ form.star }}
         </div>
