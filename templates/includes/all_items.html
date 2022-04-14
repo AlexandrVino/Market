@@ -5,7 +5,7 @@
     <div class="col"
          style="border: none; padding: 0; min-width: 30%;
          max-width: 30%;margin: 30px 0 0 0; cursor: pointer">
-      <a href="http://127.0.0.1:8000/catalog/{{ item.id }}" style="text-decoration: none; color: #fff">
+      <a href="{% url 'catalog' %}{{ item.id }}" style="text-decoration: none; color: #fff">
         <div class="card shadow-sm" style="border-radius: 10px;">
           <div class="card-body bg-dark text-white"
                style="border-radius: 10px;">

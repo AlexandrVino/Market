@@ -1,49 +1,68 @@
 {% extends "base.html" %}
 
 {% block title %}Подробное описание товара {{ item.name }}{% endblock %}
-
+{% load static %}
+{% block styles %}
+  <link rel="stylesheet" type="text/css" href={% static "css/login.css" %}>
+  <script type="text/javascript" src={% static "js/rate_item.js" %}></script>
+{% endblock %}
 {% block content %}
-  <div style="display: flex; padding: 30px; justify-content: space-between">
-    <div>
-      <h4 style="padding-bottom: 10px">{{ item.name }}</h4>
-      <p class="card-text">{{ item.text|truncatewords:10 }}</p>
-      {% if rating %}
-        <p class="rating">{{ rating }}</p>
-      {% else %}
-        <p class="rating">Оценки отсутсвуют</p>
-      {% endif %}
-    </div>
+  <div style="display: flex; padding: 30px; justify-content: space-between; height: 250px; position: relative">
 
-    <div style="display: flex">
-      <div style="margin-right: 20px">
-        <p style="margin: 0; height: 38px; line-height: 38px">Категория: </p>
-        <p style="margin: 10px 0 0 0; height: 38px; line-height: 38px">
-          Теги: </p>
+    <div style="display: flex; justify-content: space-between; width: 100%">
+
+      <div style="margin: auto 0">
+        <h4 style="padding-bottom: 10px">{{ item.name }}</h4>
+        <p class="card-text">{{ item.text|truncatewords:10 }}</p>
+        {% if rating %}
+          <p class="rating">{{ rating.star__avg }}
+            звезд/{{ rating.star__count }}
+            оценок</p>
+        {% else %}
+          <p class="rating">Оценки отсутсвуют</p>
+        {% endif %}
       </div>
-      <div>
-        <div class="button-group">
-          <button type="button"
-                  class="btn btn-outline-danger">{{ item.category.name }}</button>
-          <a href="http://127.0.0.1:8000/rate/add/{{ item.id }}"
-             class="btn btn-outline-info">
-            Оценить
-          </a>
+      <div style="display: flex; margin: auto 0; transition: 0.7s linear;" id="item_info">
+        <div style="margin-right: 20px">
+          <p style="margin: 0; height: 38px; line-height: 38px">Категория: </p>
+          <p style="margin: 10px 0 0 0; height: 38px; line-height: 38px">
+            Теги: </p>
         </div>
-        <div class="button-group"
-             style="margin-top: 10px; min-width: 206px; max-width: 600px">
-          <div>
+        <div>
+          <div class="button-group">
+            <button type="button"
+                    class="btn btn-outline-danger">{{ item.category.name }}</button>
+            <button class="btn btn-outline-info" id="set_rate">Оценить</button>
+          </div>
+          <div class="button-group"
+               style="margin-top: 10px; min-width: 206px; max-width: 600px">
+            <div>
 
-            {% for item_tag in item.tags.all %}
-              <button type="button"
-                      class="btn btn-outline-light">{{ item_tag.name }}</button>
-            {% endfor %}
+              {% for item_tag in item.tags.all|slice:3 %}
+                <button type="button"
+                        class="btn btn-outline-light">{{ item_tag.name }}</button>
+              {% endfor %}
 
+            </div>
           </div>
         </div>
       </div>
-
     </div>
 
+    <div class="form-wrapper bg-dark" style="right: 0; min-width: 280px; transition: 0.7s linear; position: absolute">
+
+      <form style="padding: 20px;" method="post" id="rate_form">
+        {% csrf_token %}
+        <h1 class="h3 mb-3 fw-normal">Add/Update Rate</h1>
+
+        <div class="form-floating ">
+          {{ form.star }}
+        </div>
+
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Update
+        </button>
+      </form>
+    </div>
 
   </div>
 {% endblock %}

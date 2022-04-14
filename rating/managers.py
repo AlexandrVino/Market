@@ -3,9 +3,9 @@ from core.managers import BaseManager
 
 class RatingManager(BaseManager):
 
-    def get_object(self, rate, *args, **kwargs):
-        if rate is None:
-            rate = self.get_objects_with_filter(**kwargs)
+    def get_item_rating(self, rate=None, *args, **kwargs):
+        if not rate:
+            return self.get_objects_with_filter(**kwargs)
 
         return rate.filter(*args, **kwargs)
 
