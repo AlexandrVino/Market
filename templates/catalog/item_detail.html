@@ -33,7 +33,9 @@
           <div class="button-group">
             <button type="button"
                     class="btn btn-outline-danger">{{ item.category.name }}</button>
-            <button class="btn btn-outline-info" id="set_rate">Оценить</button>
+            {% if user.is_authenticated %}
+              <button class="btn btn-outline-info" id="set_rate">Оценить</button>
+            {% endif %}
           </div>
           <div class="button-group"
                style="margin-top: 10px; min-width: 206px; max-width: 600px">
