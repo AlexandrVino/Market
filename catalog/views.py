@@ -1,9 +1,8 @@
 from http import HTTPStatus
 
 from django.db.models import Avg, Count
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 
 from catalog.models import Item, Tag
 from rating.forms import AddRate
@@ -41,8 +40,7 @@ def item_detail(request, item_index: int) -> HttpResponse:
 
     if form.is_valid():
         if not request.user.is_authenticated:
-            return HttpResponseRedirect(reverse('login'),
-                                        content_type='text/html')
+            return redirect('login', content_type='text/html')
 
         rate = form.cleaned_data['star']
 
@@ -51,16 +49,14 @@ def item_detail(request, item_index: int) -> HttpResponse:
         cur_rate.star = rate
         cur_rate.save()
 
-        return HttpResponseRedirect(reverse(
-            'curr_item', args=(item_index,)), content_type='text/html')
+        return redirect('curr_item', item_index=item_index)
 
     item = get_object_or_404(
         Item.manager.join_tag(
             Tag, 'name', 'text', 'tags__name', 'category__name',
             is_published=True), id=item_index, is_published=True)
 
-    rating = Rating.manager.filter(item=item,
-                                   star__in=[1, 2, 3, 4, 5]).aggregate(
+    rating = Rating.manager.filter(item=item).exclude(star=0).aggregate(
         Avg('star'), Count('star'))
 
     return render(

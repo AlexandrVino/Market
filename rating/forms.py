@@ -17,6 +17,3 @@ class AddRate(forms.ModelForm):
     class Meta:
         model = Rating
         fields = ('star',)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
