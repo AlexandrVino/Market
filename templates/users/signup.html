@@ -16,7 +16,6 @@
 <body class="bg-dark text-white" style="--bs-bg-opacity: 0.9;">
 
 <main class="form">
-
   {% if errors %}
     <script type="text/javascript">
         alert('{{ errors }}')
@@ -32,9 +31,6 @@
       <div class="form-floating ">
         {{ form_login.username }}
       </div>
-      <div class="form-floating ">
-        {{ form_login.email }}
-      </div>
       <div class="form-floating">
         {{ form_login.password1 }}
       </div>
@@ -46,16 +42,19 @@
         <input type="checkbox" value="remember-me"> Remember me
       </div>
 
-      <div class="w-100 btn btn-lg btn-primary" id="submit">Sign up
-      </div>
+      <button type="submit" class="w-100 btn btn-lg btn-primary" id="submit">Sign up
+      </button>
       <div class="sign-link-wrapper">
         <a href="{% url 'login' %}" class="sign-link">Do you already
           have an account ?</a>
+
       </div>
       <p class="mt-5 mb-3 text-muted label-text">© 2017–2022</p>
     </form>
   </div>
 </main>
+
+
 
 
 </body>

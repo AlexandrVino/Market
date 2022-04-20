@@ -1,0 +1,31 @@
+ <div class="col"
+           style="border: none; padding: 0; min-width: 30%;
+         max-width: 30%;margin: 30px 0 0 0; cursor: pointer">
+        <a href="{% url 'user_detail' user.id %}"
+           style="text-decoration: none; color: #fff">
+          <div class="card shadow-sm" style="border-radius: 10px;">
+            <div class="card-body bg-dark text-white"
+                 style="border-radius: 10px;">
+              <h4 style="border-bottom: 1px solid #CCC; padding-bottom: 10px">{{ user.username }}</h4>
+              <p class="card-text">
+                Email:
+                {% if user.email %}{{ user.email }}{% else %}Отсутствует{% endif %}
+                <br>
+
+                Имя:
+                {% if user.first_name %}{{ user.first_name }}{% else %}Отсутствует{% endif %}
+                <br>
+
+                Фамилия:
+                {% if user.last_name %}{{ user.last_name }}{% else %}Отсутствует{% endif %}
+                <br>
+
+                день рождения:
+                {% if user.profile.birthday %}{{ user.profile.birthday }}{% else %}Отсутствует{% endif %}
+                <br>
+              </p>
+
+            </div>
+          </div>
+        </a>
+      </div>

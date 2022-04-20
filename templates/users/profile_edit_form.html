@@ -1,0 +1,30 @@
+{% load static %}
+
+{% block styles %}
+  <link rel="stylesheet" type="text/css" href={% static "css/login.css" %}>
+  <script type="text/javascript" src={% static "js/rate_item.js" %}></script>
+{% endblock %}
+
+<div class="form-wrapper bg-dark">
+
+  <form style="padding: 20px; max-width: 280px" method="post">
+    {% csrf_token %}
+    <h1 class="h3 mb-3 fw-normal">Обновите денные</h1>
+
+    <div class="form-floating ">
+      {{ form.first_name }}
+    </div>
+    <div class="form-floating ">
+      {{ form.last_name }}
+    </div>
+    <div class="form-floating">
+      {{ form.email }}
+    </div>
+    <div class="form-floating">
+      {{ form.birthday }}
+    </div>
+
+    <button type="submit" class="w-100 btn btn-lg btn-primary" id="submit">Update</button>
+
+  </form>
+</div>

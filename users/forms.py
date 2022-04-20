@@ -41,13 +41,13 @@ class RegisterForm(UserCreationForm):
             'id': 'username',
         }), validators=[validate_fields])
 
-    email = forms.EmailField(
-        widget=forms.EmailInput(attrs={
-            'class': 'form-control input-field',
-            'placeholder': 'Email', 'required': True,
-            'type': "email"
-
-        }))
+    # email = forms.EmailField(
+    #     widget=forms.EmailInput(attrs={
+    #         'class': 'form-control input-field',
+    #         'placeholder': 'Email', 'required': True,
+    #         'type': "email"
+    #
+    #     }))
 
     password1 = forms.CharField(
         strip=True,
@@ -65,7 +65,42 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'password1', 'password2')
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+
+class EditProfileForm(forms.ModelForm):
+    first_name = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'class': 'form-control input-field',
+            'type': "text",
+            'placeholder': 'Имя',
+            'id': 'first_name',
+        }))
+
+    last_name = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'class': 'form-control input-field',
+            'type': "text",
+            'placeholder': 'Фамилия',
+            'id': 'last_name',
+        }))
+
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control input-field',
+            'placeholder': 'Email', 'required': False,
+            'type': "email"
+
+        }))
+
+    birthday = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'class': 'form-control input-field',
+            'placeholder': 'День рождения', 'required': False,
+            'type': "date"
+
+        }))
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email', 'birthday')

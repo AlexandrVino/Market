@@ -5,7 +5,7 @@ window.onload = () => {
     let password2 = document.getElementById('id_password2')
     let username = document.getElementById('username')
     let button = document.getElementById('submit')
-    let email = document.getElementById('id_email')
+    // let email = document.getElementById('id_email')
 
     let letters = 'qwertyuiopasdfghjklzxcvbnm'
     let numbers = '01234567890'
@@ -47,15 +47,16 @@ window.onload = () => {
     }
 
     function validate_email() {
-        let mess = 'Введите корректный email'
-        let email_text = email.value
-        let is_valid = String(email_text)
-            .toLowerCase()
-            .match(
-                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            )
-
-        return [is_valid, is_valid === null ? mess : '']
+        // let mess = 'Введите корректный email'
+        // let email_text = email.value
+        // let is_valid = String(email_text)
+        //     .toLowerCase()
+        //     .match(
+        //         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        //     )
+        //
+        // return [is_valid, is_valid === null ? mess : '']
+        return [true, '']
     }
 
     function check_username() {

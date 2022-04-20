@@ -36,7 +36,7 @@ def item_detail(request, item_index: int) -> HttpResponse:
     Возвращает страничку конкретного товара
     """
 
-    form = AddRate(request.POST)
+    form = AddRate(request.POST or None)
 
     if form.is_valid():
         if not request.user.is_authenticated:

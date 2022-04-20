@@ -1,6 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.db.models import Prefetch
 
 from core.managers import BaseManager
+
+User = get_user_model()
 
 
 class ItemsManager(BaseManager):
@@ -23,6 +26,23 @@ class ItemsManager(BaseManager):
                 'tags',
                 queryset=model.manager.filter(is_published=True).only(
                     'name'))).only(*args)
+
+    def join_users(self, user, items=None, *args, **kwargs):
+        if items is None:
+            items = self.get_objects_with_filter(**kwargs)
+
+        return items.select_related('category').filter(
+            category__is_published=True).order_by('category').prefetch_related(
+            Prefetch(
+                'users',
+                queryset=User.filter(rating__user=user).only(
+                    'name'))).only(*args)
+
+    def get_favorite(self, user, tag_model, *args, **kwargs):
+
+        return self.join_tags(tag_model,
+                              items=self.get_objects_with_filter(
+                                  rating__user__exact=user, rating__star=5, **kwargs))
 
 
 class CategoriesManager(BaseManager):

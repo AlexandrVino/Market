@@ -3,5 +3,20 @@
 {% block title %}Мой профиль{% endblock %}
 
 {% block content %}
-  <h1>Мой профиль</h1>
+  {% if errors %}
+    <script type="text/javascript">
+        alert('{{ errors }}')
+    </script>
+  {% endif %}
+  <div class="row"
+       style="padding: 50px 20px 0 20px; --bs-gutter-x: 0;  --bs-gutter-y: 0; justify-content: space-evenly;">
+    {% include "includes/user_card.html" %}
+  </div>
+  <div class="row"
+       style="padding: 0 20px 20px 20px; --bs-gutter-x: 0;  --bs-gutter-y: 0; justify-content: space-evenly;">
+    {% for item in items %}
+      {% include "includes/item_card.html" %}
+    {% endfor %}
+  </div>
+  {% include "users/profile_edit_form.html" %}
 {% endblock %}

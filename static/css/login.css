@@ -13,13 +13,22 @@ h1 {
     border-radius: 10px
 }
 
-.input-field {
+.form-floating input {
     height: 40px !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     margin-bottom: 10px;
     border: none;
     border-radius: 5px;
+
+    display: block;
+    width: 100%;
+
+    font-size: 1rem;
+
+    background-clip: padding-box;
+
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
 .label-text {

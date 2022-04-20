@@ -1,16 +1,14 @@
 from http import HTTPStatus
 
-from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, models
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
-from core.validators import validate_fields, validate_password
-from .forms import LoginForm, RegisterForm
+from catalog.models import Item, Tag
+from .forms import EditProfileForm, LoginForm, RegisterForm
 
 USER_LIST_TEMPLATE = 'users/user_list.html'
 CUR_USER_TEMPLATE = 'users/user_detail.html'
@@ -18,13 +16,20 @@ SIGNUP_TEMPLATE = 'users/signup.html'
 LOGIN_TEMPLATE = 'users/login.html'
 PROFILE_TEMPLATE = 'users/profile.html'
 
+User: models.Model = get_user_model()
+
 
 def user_list(request) -> HttpResponse:
     """
     Возвращает страничку Списка пользователей
     """
+
+    users = User.objects.select_related('profile')
+
     return render(
-        request, USER_LIST_TEMPLATE, status=HTTPStatus.OK, context={},
+        request, USER_LIST_TEMPLATE, status=HTTPStatus.OK, context={
+            'users': users
+        },
         content_type='text/html'
     )
 
@@ -37,9 +42,12 @@ def user_detail(request, user_id: int) -> HttpResponse:
     # В условии было сказано про то, что словарь контекста должен быть пустым
     # Но мне показалось логичным передавать айди пользователя
 
+    user = get_object_or_404(User, id=user_id)
+    items = Item.manager.get_favorite(user, Tag)
+
     return render(
         request, CUR_USER_TEMPLATE, status=HTTPStatus.OK,
-        context={'user_id': user_id}, content_type='text/html'
+        context={'user': user, 'items': items}, content_type='text/html'
     )
 
 
@@ -66,10 +74,10 @@ def login_view(request) -> HttpResponse:
                     '/auth/profile', status=HTTPStatus.OK,
                     context={},
                     content_type='text/html')
-    form_login = LoginForm()
+    form = LoginForm()
     return render(
         request, LOGIN_TEMPLATE, status=HTTPStatus.OK,
-        context={"form_login": form_login},
+        context={"form": form},
         content_type='text/html'
     )
 
@@ -99,34 +107,35 @@ def signup(request) -> HttpResponse:
     if request.user.is_authenticated:
         logout(request)
 
-    if request.method == 'POST':
-        form_reg = RegisterForm(request.POST)
+    form = RegisterForm(request.POST or None)
 
-        username = request.POST['username']
-        email = request.POST['email']
-        password1 = request.POST['password1']
+    if form.is_valid():
 
-        if User.objects.filter(email=email):
-            errors.append('Пользователь с этой почтой уже есть')
+        username = form.cleaned_data['username']
+        password1 = form.cleaned_data['password1']
+
+        # регичтрация была реализована ранее,
+        # но т.к. в тезе указано, что нет почты в полях, убрал
+
+        # email = form.cleaned_data['email']
+        # if User.objects.filter(email=email):
+        #     errors.append('Пользователь с этой почтой уже есть')
 
         # не использую RegisterForm.is_valid() т.к. при идентичных паролях
-        # все равно возвращает, что они не совпадают (form_reg.error_messages)
+        # все равно возвращает, что они не совпадают (form.error_messages)
         # поэтому решил сделать ручками (валидация совпадения паролей, их
         # длинны и корректность заполненых полей реализована на фронте)
 
         if not errors:
             try:
 
-                validate_fields(username)
-                validate_password(password1)
-
                 new_user = User(
                     username=username,
-                    email=email,
                     password=make_password(password1),
                 )
 
                 new_user.save()
+                login(request, new_user)
 
                 return redirect('/auth/profile', status=HTTPStatus.OK,
                                 context={}, content_type='text/html')
@@ -134,19 +143,16 @@ def signup(request) -> HttpResponse:
             except (IntegrityError, ValidationError) as err:
                 if type(err) is ValidationError:
                     err = '\n'.join(err.messages)
-                    # print(help(err))
                 if type(err) is IntegrityError:
                     err = 'Пользователь с таким именем уже сооздан'
                 errors.append(err)
-        else:
-            messages.error(request, '\n'.join(errors))
 
-    else:
-        form_reg = RegisterForm()
+    errors += [err[0] for err in list(form.errors.values())]
+    errors = '      '.join(set(errors))
 
     return render(
         request, SIGNUP_TEMPLATE, status=HTTPStatus.OK,
-        context={"form_login": form_reg, 'errors': '\n'.join(errors)},
+        context={"form_login": form, 'errors': errors},
         content_type='text/html'
     )
 
@@ -156,7 +162,43 @@ def profile(request) -> HttpResponse:
     Возвращает страничку профиля пользователя
     """
 
+    user = request.user
+    # if user.email is not None:
+    #     send_mail("Тест", 'Тест', 'admin@example.com', [user.email],
+    #               fail_silently=False)
+
+    if not user.is_authenticated:
+        return redirect('login',
+                        context={}, content_type='text/html')
+    errors = []
+
+    if request.POST:
+        form = EditProfileForm(request.POST)
+
+        if form.is_valid():
+
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.profile.birthday = form.cleaned_data['birthday']
+
+            email = form.cleaned_data['email']
+
+            if User.objects.filter(email=email):
+                errors.append('Пользователь с этой почтой уже есть')
+
+            if not errors:
+                user.email = email
+                user.save()
+
+    else:
+        form = EditProfileForm(instance=user)
+
+    items = Item.manager.get_favorite(user, Tag)
+
     return render(
-        request, PROFILE_TEMPLATE, status=HTTPStatus.OK, context={},
+        request, PROFILE_TEMPLATE, status=HTTPStatus.OK, context={
+            'user': user, 'items': items,
+            'form': form, 'errors': '\n'.join(errors)
+        },
         content_type='text/html'
     )

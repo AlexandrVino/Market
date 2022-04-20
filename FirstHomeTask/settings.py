@@ -98,6 +98,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR / 'sent_email'
+
 # Internationalization
 
 LANGUAGE_CODE = 'ru-ru'
@@ -114,7 +117,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-   os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "static"),
 ]
 
 # Default primary key field type
@@ -125,3 +128,16 @@ INTERNAL_IPS = [
     "127.0.0.1",
     # ...
 ]
+
+LOGIN_URL = '/auth/login'
+LOGIN_REDIRECT_URL = '/auth/profile/'
+LOGOUT_REDIRECT_URL = '/auth/login/'
+
+ACCOUNT_EMAIL_UNIQUE = True
+ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
+
+DEFAULT_FROM_EMAIL = 'support@yoursite.ru'
+EMAIL_HOST = "smtp.yoursmtpserver.ru"
+EMAIL_PORT = 25
+EMAIL_HOST_USER = "user"
+EMAIL_HOST_PASSWORD = "pass"

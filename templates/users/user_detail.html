@@ -3,5 +3,14 @@
 {% block title %}Информация о пользователе {{ user_id }}{% endblock %}
 
 {% block content %}
-  <h1>Информация о пользователе {{ user_id }}</h1>
+  <div class="row"
+       style="padding: 50px 20px 0 20px; --bs-gutter-x: 0;  --bs-gutter-y: 0; justify-content: space-evenly;">
+    {% include "includes/user_card.html" %}
+  </div>
+  <div class="row"
+       style="padding: 0 20px 20px 20px; --bs-gutter-x: 0;  --bs-gutter-y: 0; justify-content: space-evenly;">
+    {% for item in items %}
+      {% include "includes/item_card.html" %}
+    {% endfor %}
+  </div>
 {% endblock %}

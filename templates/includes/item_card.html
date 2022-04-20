@@ -1,8 +1,4 @@
-<div class="row"
-     style="padding: 50px 20px; --bs-gutter-x: 0;  --bs-gutter-y: 0; justify-content: space-evenly;">
-  {% for item in items %}
-
-    <div class="col"
+<div class="col"
          style="border: none; padding: 0; min-width: 30%;
          max-width: 30%;margin: 30px 0 0 0; cursor: pointer">
       <a href="{% url 'catalog' %}{{ item.id }}" style="text-decoration: none; color: #fff">
@@ -35,6 +31,3 @@
         </div>
       </a>
     </div>
-
-  {% endfor %}
-</div>

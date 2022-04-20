@@ -3,5 +3,12 @@
 {% block title %}Список пользователей{% endblock %}
 
 {% block content %}
-  <h1>Список пользователей</h1>
+  <div class="row"
+       style="padding: 50px 20px; --bs-gutter-x: 0;  --bs-gutter-y: 0; justify-content: space-evenly;">
+    {% for user in users %}
+
+     {% include "includes/user_card.html" %}
+
+    {% endfor %}
+  </div>
 {% endblock %}
