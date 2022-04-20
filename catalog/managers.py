@@ -42,7 +42,8 @@ class ItemsManager(BaseManager):
 
         return self.join_tags(tag_model,
                               items=self.get_objects_with_filter(
-                                  rating__user__exact=user, rating__star=5, **kwargs))
+                                  rating__user__exact=user, rating__star=5,
+                                  **kwargs))
 
 
 class CategoriesManager(BaseManager):
