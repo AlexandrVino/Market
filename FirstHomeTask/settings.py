@@ -52,6 +52,11 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'users.backends.EmailAuthBackend',
+]
+
 ROOT_URLCONF = 'FirstHomeTask.urls'
 
 TEMPLATES = [

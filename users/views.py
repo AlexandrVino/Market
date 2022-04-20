@@ -1,19 +1,26 @@
 from http import HTTPStatus
 
-from django.contrib.auth import authenticate, get_user_model, login, logout
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ValidationError
+from django.core.mail import EmailMessage
 from django.db import IntegrityError, models
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from catalog.models import Item, Tag
+from .backends import EmailAuthBackend
 from .forms import EditProfileForm, LoginForm, RegisterForm
 
 USER_LIST_TEMPLATE = 'users/user_list.html'
 CUR_USER_TEMPLATE = 'users/user_detail.html'
 SIGNUP_TEMPLATE = 'users/signup.html'
-LOGIN_TEMPLATE = 'users/login.html'
+LOGIN_WITH_USERNAME_TEMPLATE = 'users/login_with_username.html'
+LOGIN_WITH_EMAIL_TEMPLATE = 'users/login_with_email.html'
 PROFILE_TEMPLATE = 'users/profile.html'
 
 User: models.Model = get_user_model()
@@ -51,7 +58,7 @@ def user_detail(request, user_id: int) -> HttpResponse:
     )
 
 
-def login_view(request) -> HttpResponse:
+def login_with_email_view(request) -> HttpResponse:
     """
     Возвращает страничку регистрации пользователя
     """
@@ -60,23 +67,27 @@ def login_view(request) -> HttpResponse:
         return redirect('/auth/profile', status=HTTPStatus.OK,
                         context={}, content_type='text/html')
 
-    if request.method == 'POST':
+    form = LoginForm(request.POST or None)
 
-        username = request.POST['username']
-        password = request.POST['password']
+    if form.is_valid():
 
-        user = authenticate(username=username, password=password)
+        email = form.cleaned_data['email']
+        password = form.cleaned_data['password']
+
+        user = EmailAuthBackend.authenticate(
+            request, email=email, password=password
+        )
 
         if user is not None:
             if user.is_active:
-                login(request, user)
+                login(request, user, backend='users.backends.EmailAuthBackend')
                 return redirect(
                     '/auth/profile', status=HTTPStatus.OK,
                     context={},
                     content_type='text/html')
-    form = LoginForm()
+
     return render(
-        request, LOGIN_TEMPLATE, status=HTTPStatus.OK,
+        request, LOGIN_WITH_EMAIL_TEMPLATE, status=HTTPStatus.OK,
         context={"form": form},
         content_type='text/html'
     )
@@ -95,7 +106,7 @@ def logout_view(request) -> HttpResponse:
 
     form_login = LoginForm()
     return render(
-        request, LOGIN_TEMPLATE, status=HTTPStatus.OK,
+        request, LOGIN_WITH_USERNAME_TEMPLATE, status=HTTPStatus.OK,
         context={"form_login": form_login},
         content_type='text/html'
     )
@@ -111,40 +122,51 @@ def signup(request) -> HttpResponse:
 
     if form.is_valid():
 
-        username = form.cleaned_data['username']
-        password1 = form.cleaned_data['password1']
+        email = form.cleaned_data['email']
 
-        # регичтрация была реализована ранее,
-        # но т.к. в тезе указано, что нет почты в полях, убрал
-
-        # email = form.cleaned_data['email']
-        # if User.objects.filter(email=email):
-        #     errors.append('Пользователь с этой почтой уже есть')
+        if User.objects.filter(email=email):
+            errors.append('Пользователь с этой почтой уже есть')
 
         # не использую RegisterForm.is_valid() т.к. при идентичных паролях
-        # все равно возвращает, что они не совпадают (form.error_messages)
+        # все равно возвращает, что они не совпадают (form_reg.error_messages)
         # поэтому решил сделать ручками (валидация совпадения паролей, их
         # длинны и корректность заполненых полей реализована на фронте)
 
         if not errors:
             try:
 
-                new_user = User(
-                    username=username,
-                    password=make_password(password1),
-                )
+                new_user = form.save(commit=False)
+                new_user.is_active = False
+                new_user.email = email
 
                 new_user.save()
-                login(request, new_user)
 
-                return redirect('/auth/profile', status=HTTPStatus.OK,
-                                context={}, content_type='text/html')
+                current_site = get_current_site(request)
+                mail_subject = 'Activation link has been sent to your email id'
+                message = render_to_string('users/acc_active_email.html', {
+                    'user': new_user,
+                    'domain': current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
+                    'token': default_token_generator.make_token(new_user),
+                })
+
+                to_email = form.cleaned_data.get('email')
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+
+                return HttpResponse('Подтвердите почту')
+
+                # return redirect('/auth/profile', status=HTTPStatus.OK,
+                #                 context={}, content_type='text/html')
 
             except (IntegrityError, ValidationError) as err:
+
                 if type(err) is ValidationError:
                     err = '\n'.join(err.messages)
+
                 if type(err) is IntegrityError:
                     err = 'Пользователь с таким именем уже сооздан'
+
                 errors.append(err)
 
     errors += [err[0] for err in list(form.errors.values())]
@@ -155,6 +177,25 @@ def signup(request) -> HttpResponse:
         context={"form_login": form, 'errors': errors},
         content_type='text/html'
     )
+
+
+def activate(request, uidb64, token):
+    try:
+
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+
+        return redirect('/auth/profile', status=HTTPStatus.OK,
+                        context={}, content_type='text/html')
+    else:
+        return HttpResponse('Activation link is invalid!')
 
 
 def profile(request) -> HttpResponse:
@@ -168,8 +209,8 @@ def profile(request) -> HttpResponse:
     #               fail_silently=False)
 
     if not user.is_authenticated:
-        return redirect('login',
-                        context={}, content_type='text/html')
+        return redirect('login')
+
     errors = []
 
     if request.POST:

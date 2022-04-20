@@ -10,54 +10,56 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
         crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href={% static "css/login.css" %}>
-  <script src="../../static/js/signup.js" type="text/javascript"></script>
-  <title>Регистрация</title>
+
+  <title>Вход</title>
 </head>
 <body class="bg-dark text-white" style="--bs-bg-opacity: 0.9;">
 
 <main class="form">
 
-  {% if errors %}
-    <script type="text/javascript">
-        alert('{{ errors }}')
-    </script>
+  {% if form.errors %}
+    {% for field in form %}
+      {% for error in field.errors %}
+        <script type="text/javascript">
+            alert('{{ error|escape }}')
+        </script>
+      {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+      <script type="text/javascript">
+          alert('{{ error|escape }}')
+      </script>
+    {% endfor %}
   {% endif %}
 
   <div class="form-wrapper bg-dark">
 
     <form style="padding: 20px;" method="post">
       {% csrf_token %}
-      <h1 class="h3 mb-3 fw-normal">Please sign up</h1>
+      <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
       <div class="form-floating ">
-        {{ form_login.username }}
-      </div>
-      <div class="form-floating ">
-        {{ form_login.email }}
+        {{ form.email }}
       </div>
       <div class="form-floating">
-        {{ form_login.password1 }}
-      </div>
-      <div class="form-floating">
-        {{ form_login.password2 }}
+        {{ form.password }}
       </div>
 
       <div class="checkbox mb-3">
         <input type="checkbox" value="remember-me"> Remember me
       </div>
 
-      <div class="w-100 btn btn-lg btn-primary" id="submit">Sign up
-      </div>
+      <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in
+      </button>
       <div class="sign-link-wrapper">
-        <a href="{% url 'login' %}" class="sign-link">Do you already
-          have an account ?</a>
+        <a href="{% url 'signup' %}" class="sign-link">Don't you
+          have an account yet ?</a>
+        <a href="{% url 'password_reset' %}" class="sign-link">Forgot your password ?</a>
       </div>
       <p class="mt-5 mb-3 text-muted label-text">© 2017–2022</p>
     </form>
   </div>
 </main>
-
-
 
 
 </body>

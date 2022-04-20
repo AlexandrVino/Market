@@ -6,12 +6,12 @@ from core.validators import validate_fields
 
 
 class LoginForm(forms.ModelForm):
-    username = forms.CharField(widget=forms.TextInput(
-        attrs={
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
             'class': 'form-control input-field',
-            'type': "text",
-            'placeholder': 'username',
-            'id': 'username'
+            'placeholder': 'Email', 'required': False,
+            'type': "email"
+
         }))
 
     password = forms.CharField(
@@ -26,7 +26,7 @@ class LoginForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'password')
+        fields = ('email', 'password')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -41,13 +41,13 @@ class RegisterForm(UserCreationForm):
             'id': 'username',
         }), validators=[validate_fields])
 
-    # email = forms.EmailField(
-    #     widget=forms.EmailInput(attrs={
-    #         'class': 'form-control input-field',
-    #         'placeholder': 'Email', 'required': True,
-    #         'type': "email"
-    #
-    #     }))
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control input-field',
+            'placeholder': 'Email', 'required': True,
+            'type': "email"
+
+        }))
 
     password1 = forms.CharField(
         strip=True,
