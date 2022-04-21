@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login
 
 User = get_user_model()
 
@@ -9,6 +9,7 @@ class EmailAuthBackend:
         try:
             user = User.objects.get(email=email)
             if user.check_password(password):
+                login(request, user)
                 return user
             return None
         except User.DoesNotExist:

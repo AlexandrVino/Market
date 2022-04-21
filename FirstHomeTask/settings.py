@@ -52,11 +52,6 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'users.backends.EmailAuthBackend',
-]
-
 ROOT_URLCONF = 'FirstHomeTask.urls'
 
 TEMPLATES = [
@@ -103,9 +98,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = BASE_DIR / 'sent_email'
-
 # Internationalization
 
 LANGUAGE_CODE = 'ru-ru'
@@ -141,8 +133,12 @@ LOGOUT_REDIRECT_URL = '/auth/login/'
 ACCOUNT_EMAIL_UNIQUE = True
 ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
 
-DEFAULT_FROM_EMAIL = 'support@yoursite.ru'
-EMAIL_HOST = "smtp.yoursmtpserver.ru"
-EMAIL_PORT = 25
-EMAIL_HOST_USER = "user"
-EMAIL_HOST_PASSWORD = "pass"
+EMAIL_USE_TLS = True
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = 'no-reply@gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR / 'sent_email'
+
+EMAIL_HOST_USER = env('SERVER_EMAIL')
+EMAIL_HOST_PASSWORD = env('SERVER_EMAIL_PASS')

@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ValidationError
@@ -68,7 +68,6 @@ def login_with_email_view(request) -> HttpResponse:
                         context={}, content_type='text/html')
 
     form = LoginForm(request.POST or None)
-
     if form.is_valid():
 
         email = form.cleaned_data['email']
@@ -80,7 +79,8 @@ def login_with_email_view(request) -> HttpResponse:
 
         if user is not None:
             if user.is_active:
-                login(request, user, backend='users.backends.EmailAuthBackend')
+
+                EmailAuthBackend.authenticate(request, email, password)
                 return redirect(
                     '/auth/profile', status=HTTPStatus.OK,
                     context={},
@@ -138,7 +138,6 @@ def signup(request) -> HttpResponse:
                 new_user = form.save(commit=False)
                 new_user.is_active = False
                 new_user.email = email
-
                 new_user.save()
 
                 current_site = get_current_site(request)
@@ -150,8 +149,9 @@ def signup(request) -> HttpResponse:
                     'token': default_token_generator.make_token(new_user),
                 })
 
-                to_email = form.cleaned_data.get('email')
-                email = EmailMessage(mail_subject, message, to=[to_email])
+                email = EmailMessage(mail_subject, message,
+                                     to=[new_user.email])
+
                 email.send()
 
                 return HttpResponse('Подтвердите почту')
@@ -185,7 +185,7 @@ def activate(request, uidb64, token):
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
 
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist) as err:
         user = None
 
     if user is not None and default_token_generator.check_token(user, token):
@@ -222,13 +222,7 @@ def profile(request) -> HttpResponse:
             user.last_name = form.cleaned_data['last_name']
             user.profile.birthday = form.cleaned_data['birthday']
 
-            email = form.cleaned_data['email']
-
-            if User.objects.filter(email=email):
-                errors.append('Пользователь с этой почтой уже есть')
-
             if not errors:
-                user.email = email
                 user.save()
 
     else:

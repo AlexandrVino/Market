@@ -85,13 +85,13 @@ class EditProfileForm(forms.ModelForm):
             'id': 'last_name',
         }))
 
-    email = forms.EmailField(
-        widget=forms.EmailInput(attrs={
-            'class': 'form-control input-field',
-            'placeholder': 'Email', 'required': False,
-            'type': "email"
-
-        }))
+    # email = forms.EmailField(
+    #     widget=forms.EmailInput(attrs={
+    #         'class': 'form-control input-field',
+    #         'placeholder': 'Email', 'required': False,
+    #         'type': "email"
+    #
+    #     }))
 
     birthday = forms.DateField(
         widget=forms.DateInput(attrs={
@@ -103,4 +103,4 @@ class EditProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'birthday')
+        fields = ('first_name', 'last_name', 'birthday')

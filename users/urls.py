@@ -21,8 +21,8 @@ urlpatterns = [
          name='logout'),
 
     path('signup/', signup, name='signup'),
-    path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/'
-         '(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+    path(r'activate/(?P<uidb64>[0-9A-Za-z_\-]+)/'
+         '(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/',
          activate, name='activate'),
 
     path('password_change/',
