@@ -5,6 +5,11 @@ from users.models import Profile
 User = get_user_model()
 
 
+class EmailUniqueFailed(BaseException):
+    def __str__(self):
+        return 'Пользователь с этой почтой уже есть'
+
+
 class EmailAuthBackend:
     @staticmethod
     def authenticate(request, email=None, password=None):
@@ -25,7 +30,7 @@ class EmailAuthBackend:
             raise ValueError('User must have an email address')
 
         if User.objects.filter(email=email):
-            return [None, 'Пользователь с этой почтой уже есть']
+            raise EmailUniqueFailed()
 
         user = User(email=email, username=username)
         user.set_password(password1)
@@ -34,7 +39,7 @@ class EmailAuthBackend:
         Profile.objects.create(user=user)
         user.profile.save()
 
-        return [user, '']
+        return user
 
     @staticmethod
     def get_user(user_id):

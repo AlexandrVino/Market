@@ -13,7 +13,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from catalog.models import Item, Tag
-from .backends import EmailAuthBackend
+from .backends import EmailAuthBackend, EmailUniqueFailed
 from .forms import EditProfileForm, LoginForm, RegisterForm
 
 USER_LIST_TEMPLATE = 'users/user_list.html'
@@ -122,29 +122,29 @@ def signup(request) -> HttpResponse:
     if form.is_valid() and not errors:
         try:
 
-            new_user, mess = EmailAuthBackend.create_user(**form.cleaned_data)
-            if not mess:
-                current_site = get_current_site(request)
-                mail_subject = 'Activation link has been sent to your email id'
+            new_user = EmailAuthBackend.create_user(**form.cleaned_data)
+            current_site = get_current_site(request)
+            mail_subject = 'Activation link has been sent to your email id'
 
-                message = render_to_string('users/acc_active_email.html', {
-                    'user': new_user, 'domain': current_site.domain,
-                    'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
-                    'token': default_token_generator.make_token(new_user),
-                })
+            message = render_to_string('users/acc_active_email.html', {
+                'user': new_user, 'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
+                'token': default_token_generator.make_token(new_user),
+            })
 
-                EmailMessage(mail_subject, message, to=[new_user.email]).send()
-                return HttpResponse('Подтвердите почту')
+            EmailMessage(mail_subject, message, to=[new_user.email]).send()
+            return HttpResponse('Подтвердите почту')
 
-            errors.append(mess)
-
-        except (IntegrityError, ValidationError) as err:
+        except (IntegrityError, ValidationError, EmailUniqueFailed) as err:
 
             if type(err) is ValidationError:
                 err = '\n'.join(err.messages)
 
             if type(err) is IntegrityError:
                 err = 'Пользователь с таким именем уже сооздан'
+
+            if type(err) is EmailUniqueFailed:
+                err = str(err)
 
             errors.append(err)
 
