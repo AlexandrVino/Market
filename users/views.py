@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from catalog.models import Item, Tag
 from .forms import EditProfileForm, LoginForm, RegisterForm
+from .models import Profile
 
 USER_LIST_TEMPLATE = 'users/user_list.html'
 CUR_USER_TEMPLATE = 'users/user_detail.html'
@@ -114,18 +115,6 @@ def signup(request) -> HttpResponse:
         username = form.cleaned_data['username']
         password1 = form.cleaned_data['password1']
 
-        # регичтрация была реализована ранее,
-        # но т.к. в тезе указано, что нет почты в полях, убрал
-
-        # email = form.cleaned_data['email']
-        # if User.objects.filter(email=email):
-        #     errors.append('Пользователь с этой почтой уже есть')
-
-        # не использую RegisterForm.is_valid() т.к. при идентичных паролях
-        # все равно возвращает, что они не совпадают (form.error_messages)
-        # поэтому решил сделать ручками (валидация совпадения паролей, их
-        # длинны и корректность заполненых полей реализована на фронте)
-
         if not errors:
             try:
 
@@ -133,8 +122,12 @@ def signup(request) -> HttpResponse:
                     username=username,
                     password=make_password(password1),
                 )
+                new_user.save()
 
                 new_user.save()
+                Profile.objects.create(user=new_user)
+                new_user.profile.save()
+
                 login(request, new_user)
 
                 return redirect('/auth/profile', status=HTTPStatus.OK,

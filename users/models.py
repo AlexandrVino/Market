@@ -1,8 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
 
 User = get_user_model()
 
@@ -22,10 +19,3 @@ class Profile(models.Model):
     class Meta:
         verbose_name = 'Дополнительное поле'
         verbose_name_plural = 'Дополнительное поля'
-
-
-@receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs) -> None:
-    if created:
-        Profile.objects.create(user=instance)
-    instance.profile.save()
