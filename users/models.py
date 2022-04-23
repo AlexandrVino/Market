@@ -1,6 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db import models
 
 User = get_user_model()

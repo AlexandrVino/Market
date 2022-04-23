@@ -124,7 +124,6 @@ def signup(request) -> HttpResponse:
 
             new_user, mess = EmailAuthBackend.create_user(**form.cleaned_data)
             if not mess:
-
                 current_site = get_current_site(request)
                 mail_subject = 'Activation link has been sent to your email id'
 
@@ -165,7 +164,7 @@ def activate(request, uidb64, token):
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
 
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist) as err:
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
     if user is not None and default_token_generator.check_token(user, token):
