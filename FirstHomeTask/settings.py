@@ -121,17 +121,17 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 INTERNAL_IPS = [
-    # ...
     "127.0.0.1",
-    # ...
 ]
 
 LOGIN_URL = '/auth/login'
 LOGIN_REDIRECT_URL = '/auth/profile/'
 LOGOUT_REDIRECT_URL = '/auth/login/'
 
-ACCOUNT_EMAIL_UNIQUE = True
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"

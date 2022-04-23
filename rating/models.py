@@ -1,8 +1,10 @@
-from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from catalog.models import Item
 from rating.managers import RatingManager
+
+User = get_user_model()
 
 
 class Rating(models.Model):
@@ -19,8 +21,8 @@ class Rating(models.Model):
     manager = RatingManager()
 
     # если удалили пользователя, то удаляем все его оценки
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             default=None)
 
     star = models.SmallIntegerField(
         blank=True, default=0, choices=(

@@ -35,7 +35,7 @@ class ItemsManager(BaseManager):
             category__is_published=True).order_by('category').prefetch_related(
             Prefetch(
                 'users',
-                queryset=User.filter(rating__user=user).only(
+                queryset=User.objects.filter(rating__user=user).only(
                     'name'))).only(*args)
 
     def get_favorite(self, user, tag_model, *args, **kwargs):

@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model, login
 
+from users.models import Profile
+
 User = get_user_model()
 
 
@@ -14,6 +16,25 @@ class EmailAuthBackend:
             return None
         except User.DoesNotExist:
             return None
+
+    @staticmethod
+    def create_user(email=None, username=None, password1=None, password2=None):
+        """ Create a new user profile """
+
+        if not email:
+            raise ValueError('User must have an email address')
+
+        if User.objects.filter(email=email):
+            return [None, 'Пользователь с этой почтой уже есть']
+
+        user = User(email=email, username=username)
+        user.set_password(password1)
+        user.is_active = False
+        user.save()
+        Profile.objects.create(user=user)
+        user.profile.save()
+
+        return [user, '']
 
     @staticmethod
     def get_user(user_id):

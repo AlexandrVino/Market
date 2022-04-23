@@ -79,7 +79,6 @@ def login_with_email_view(request) -> HttpResponse:
 
         if user is not None:
             if user.is_active:
-
                 EmailAuthBackend.authenticate(request, email, password)
                 return redirect(
                     '/auth/profile', status=HTTPStatus.OK,
@@ -120,54 +119,35 @@ def signup(request) -> HttpResponse:
 
     form = RegisterForm(request.POST or None)
 
-    if form.is_valid():
+    if form.is_valid() and not errors:
+        try:
 
-        email = form.cleaned_data['email']
-
-        if User.objects.filter(email=email):
-            errors.append('Пользователь с этой почтой уже есть')
-
-        # не использую RegisterForm.is_valid() т.к. при идентичных паролях
-        # все равно возвращает, что они не совпадают (form_reg.error_messages)
-        # поэтому решил сделать ручками (валидация совпадения паролей, их
-        # длинны и корректность заполненых полей реализована на фронте)
-
-        if not errors:
-            try:
-
-                new_user = form.save(commit=False)
-                new_user.is_active = False
-                new_user.email = email
-                new_user.save()
+            new_user, mess = EmailAuthBackend.create_user(**form.cleaned_data)
+            if not mess:
 
                 current_site = get_current_site(request)
                 mail_subject = 'Activation link has been sent to your email id'
+
                 message = render_to_string('users/acc_active_email.html', {
-                    'user': new_user,
-                    'domain': current_site.domain,
+                    'user': new_user, 'domain': current_site.domain,
                     'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
                     'token': default_token_generator.make_token(new_user),
                 })
 
-                email = EmailMessage(mail_subject, message,
-                                     to=[new_user.email])
-
-                email.send()
-
+                EmailMessage(mail_subject, message, to=[new_user.email]).send()
                 return HttpResponse('Подтвердите почту')
 
-                # return redirect('/auth/profile', status=HTTPStatus.OK,
-                #                 context={}, content_type='text/html')
+            errors.append(mess)
 
-            except (IntegrityError, ValidationError) as err:
+        except (IntegrityError, ValidationError) as err:
 
-                if type(err) is ValidationError:
-                    err = '\n'.join(err.messages)
+            if type(err) is ValidationError:
+                err = '\n'.join(err.messages)
 
-                if type(err) is IntegrityError:
-                    err = 'Пользователь с таким именем уже сооздан'
+            if type(err) is IntegrityError:
+                err = 'Пользователь с таким именем уже сооздан'
 
-                errors.append(err)
+            errors.append(err)
 
     errors += [err[0] for err in list(form.errors.values())]
     errors = '      '.join(set(errors))
