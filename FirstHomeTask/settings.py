@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'catalog.apps.CatalogConfig',
 
     'debug_toolbar',
+    'sorl.thumbnail',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
@@ -142,3 +144,6 @@ EMAIL_FILE_PATH = BASE_DIR / 'sent_email'
 
 EMAIL_HOST_USER = env('SERVER_EMAIL')
 EMAIL_HOST_PASSWORD = env('SERVER_EMAIL_PASS')
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'

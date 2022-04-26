@@ -1,7 +1,10 @@
 import mimetypes
 
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+
+from FirstHomeTask import settings
 
 mimetypes.add_type("application/javascript", ".js", True)
 
@@ -18,5 +21,8 @@ urlpatterns = [
     path('auth/', include('users.urls')),
     # path("auth/", include("account.urls")),
 
-    path('__debug__/', include('debug_toolbar.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += path('__debug__/', include('debug_toolbar.urls')),
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

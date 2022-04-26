@@ -22,7 +22,7 @@ def home(request) -> HttpResponse:
         ides = sample(ides, ITEMS_COUNT)
 
     items = Item.manager.join_tags(
-        Tag, None, 'name', 'text', 'tags__name',
+        Tag, None, 'name', 'text', 'tags__name', 'upload',
         'category__name', is_published=True, pk__in=ides)
 
     return render(

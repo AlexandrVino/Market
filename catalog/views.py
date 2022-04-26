@@ -18,7 +18,7 @@ def item_list(request) -> HttpResponse:
     """
 
     items = Item.manager.join_tags(
-        Tag, None, 'name', 'text', 'tags__name',
+        Tag, None, 'name', 'text', 'tags__name', 'upload',
         'category__name', is_published=True)
 
     return render(
@@ -53,7 +53,7 @@ def item_detail(request, item_index: int) -> HttpResponse:
 
     item = get_object_or_404(
         Item.manager.join_tag(
-            Tag, 'name', 'text', 'tags__name', 'category__name',
+            Tag, 'name', 'text', 'tags__name', 'category__name', 'upload',
             is_published=True), id=item_index, is_published=True)
 
     rating = Rating.manager.filter(item=item).exclude(star=0).aggregate(
