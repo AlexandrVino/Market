@@ -21,12 +21,22 @@
              class="nav-link px-2 text-white">Каталог</a>
         </li>
         <li>
+          <a href="{% url 'users' %}"
+             class="nav-link px-2 text-white">Пользователи</a>
+        </li>
+        <li>
           <a href="#" class="nav-link px-2 text-white">FAQs</a>
         </li>
         <li>
           <a href="{% url 'about' %}"
              class="nav-link px-2 text-white">О Нас</a>
         </li>
+        {% if request.user.is_superuser %}
+        <li>
+          <a href="{% url 'admin:index' %}"
+             class="nav-link px-2 text-primary">Админка</a>
+        </li>
+        {% endif %}
       </ul>
 
       <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">

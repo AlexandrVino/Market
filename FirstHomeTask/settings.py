@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "rating.apps.RatingConfig",
     "catalog.apps.CatalogConfig",
     "debug_toolbar",
+    "ckeditor",
 ]
 
 MIDDLEWARE = [

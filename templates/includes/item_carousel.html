@@ -22,7 +22,7 @@
            style="text-decoration: none">
           <div class="carousel-caption text-start text-white">
             <h1>{{ item.name }}</h1>
-            <p>{{ item.text|truncatewords:10 }}</p>
+            <p>{{ item.text|truncatewords:10|safe }}</p>
 
             <button type="button"
                     class="btn btn-outline-danger">{{ item.category.name }}</button>

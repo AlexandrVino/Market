@@ -6,7 +6,7 @@
           <div class="card-body bg-dark text-white"
                style="border-radius: 10px;">
             <h4 style="border-bottom: 1px solid #CCC; padding-bottom: 10px">{{ item.name }}</h4>
-            <p class="card-text">{{ item.text|truncatewords:10 }}</p>
+            <p class="card-text">{{ item.text|safe|truncatewords:10 }}</p>
             <div class="d-flex justify-content-between align-items-center">
 
               <div>
