@@ -137,3 +137,7 @@ EMAIL_FILE_PATH = BASE_DIR / "sent_email"
 
 EMAIL_HOST_USER = env("SERVER_EMAIL")
 EMAIL_HOST_PASSWORD = env("SERVER_EMAIL_PASS")
+
+CKEDITOR_CONFIGS = {
+    "awesome_ckeditor": {"toolbar": "Advanced", "skin": "moono"},
+}

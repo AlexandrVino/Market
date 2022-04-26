@@ -65,6 +65,7 @@ class Item(Base):
     )
 
     text = RichTextField(
+        config_name="awesome_ckeditor",
         validators=[validate_catalog_text],
         verbose_name="Описание",
         help_text='Минимум 2 слова, используйте "роскошно/превосходно"',
