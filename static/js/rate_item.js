@@ -1,6 +1,6 @@
 window.onload = () => {
     let rateForm = document.getElementById('rate_form');
-    let item_info = document.getElementById('item_info');
+    let item_image = document.getElementById('item_image');
     let button = document.getElementById('set_rate')
     let close_button = document.getElementById('close_button')
 
@@ -8,11 +8,11 @@ window.onload = () => {
 
     button.onclick = () => {
         rateForm.hidden = !rateForm.hidden;
-        item_info.hidden = !rateForm.hidden;
+        item_image.hidden = !rateForm.hidden;
     }
 
     close_button.onclick = () => {
         rateForm.hidden = true;
-        item_info.hidden = false;
+        item_image.hidden = false;
     }
 }
