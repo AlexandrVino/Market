@@ -58,4 +58,13 @@
       </div>
     </div>
   </div>
+  {% if birthday_list %}
+  <h3>Наши именинники:</h3>
+  <br>
+  <ul class="list-group list-group-flush bg-dark">
+  {% for birthday in birthday_list %}
+  <li class="list-group-item bg-dark text-primary"><a href="{% url 'user_detail' user.id %}">{{birthday.user.username}}</a></li>
+  {% endfor %}
+  </ul>
+  {% endif %}
 </header>
