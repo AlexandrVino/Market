@@ -5,8 +5,8 @@ from django.contrib.auth.views import (
 )
 from django.urls import path
 
-from users.views import (activate, login_with_email_view, profile, signup,
-                         user_detail, user_list)
+from users.views import (AcitvateView, ProfileView, SignupView, UserDetailView,
+                         UserListView, LoginWithEmailView)
 
 urlpatterns = [
 
@@ -14,16 +14,16 @@ urlpatterns = [
     #      LoginView.as_view(template_name='users/login_with_username.html'),
     #      name='login'),
 
-    path('login/', login_with_email_view, name='login'),
+    path('login/', LoginWithEmailView.as_view(), name='login'),
 
     path('logout/',
          LogoutView.as_view(template_name='users/logout.html'),
          name='logout'),
 
-    path('signup/', signup, name='signup'),
+    path('signup/', SignupView.as_view(), name='signup'),
     path(r'activate/(?P<uidb64>[0-9A-Za-z_\-]+)/'
          '(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/',
-         activate, name='activate'),
+         AcitvateView.as_view(), name='activate'),
 
     path('password_change/',
          PasswordChangeView.as_view(
@@ -55,11 +55,11 @@ urlpatterns = [
              template_name='users/password_reset_complete.html'),
          name='password_reset_complete'),
 
-    path('users/', user_list, name='users'),
-    path('users/<int:user_id>', user_detail, name='user_detail'),
+    path('users/', UserListView.as_view(), name='users'),
+    path('users/<int:user_id>', UserDetailView.as_view(), name='user_detail'),
 
     # path('login', login_view, name='login'),
     # path('logout', logout_view, name='logout'),
 
-    path('profile/', profile, name='profile')
+    path('profile/', ProfileView.as_view(), name='profile')
 ]
