@@ -1,8 +1,8 @@
 from django.urls import path
 
-from catalog.views import item_detail, item_list
+from catalog.views import ItemListView, ItemDetailView
 
 urlpatterns = [
-    path('', item_list, name='catalog'),
-    path('<int:item_index>/', item_detail, name='curr_item'),
+    path('', ItemListView.as_view(), name='catalog'),
+    path('<int:pk>/', ItemDetailView.as_view(), name='curr_item'),
 ]
