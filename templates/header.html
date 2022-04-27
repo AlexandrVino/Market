@@ -10,7 +10,7 @@
         </svg>
       </a>
       <a href="{% url 'home' %}"
-             class="nav-link px-2"><img height="50px"  src="{% static '/img/Logo.png' %}" ></a> 
+         class="nav-link px-2"><img height="50px" src="{% static '/img/Logo.png' %}"></a>
       <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 mb-md-0">
         <li>
           <a href="{% url 'home' %}"
@@ -32,10 +32,10 @@
              class="nav-link px-2 text-white">О Нас</a>
         </li>
         {% if request.user.is_superuser %}
-        <li>
-          <a href="{% url 'admin:index' %}"
-             class="nav-link px-2 text-primary">Админка</a>
-        </li>
+          <li>
+            <a href="{% url 'admin:index' %}"
+               class="nav-link px-2 text-white">Админка</a>
+          </li>
         {% endif %}
       </ul>
 
@@ -59,12 +59,11 @@
     </div>
   </div>
   {% if birthday_list %}
-  <h3>Наши именинники:</h3>
-  <br>
-  <ul class="list-group list-group-flush bg-dark">
-  {% for birthday in birthday_list %}
-  <li class="list-group-item bg-dark text-primary"><a href="{% url 'user_detail' user.id %}">{{birthday.user.username}}</a></li>
-  {% endfor %}
-  </ul>
+
+    <marquee scrollamount='7'>Наши именинники:
+      {% for birthday in birthday_list %}
+        <a class="text-white" href="{% url 'user_detail' user.id %}">{{ birthday.user.username }}</a>
+      {% endfor %}
+    </marquee>
   {% endif %}
 </header>

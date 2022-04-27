@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ValidationError
@@ -8,21 +9,18 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
+from django.views.generic.base import TemplateView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, FormView, ModelFormMixin
+from django.views.generic.list import ListView
 
 from catalog.models import Item, Tag
 from .backends import EmailAuthBackend, EmailUniqueFailed
 from .forms import EditProfileForm, LoginForm, RegisterForm
-
-from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, FormView, ModelFormMixin
-from django.views.generic.detail import DetailView
-from django.views.generic.base import TemplateView
-
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 
 USER_LIST_TEMPLATE = 'users/user_list.html'
 CUR_USER_TEMPLATE = 'users/user_detail.html'
@@ -101,7 +99,7 @@ class SignupView(CreateView):
 
     def post(self, request, *args, **kwargs):
         form = self.get_form_class()(request.POST)
-
+        errors = []
         if form.is_valid():
             try:
                 new_user = EmailAuthBackend.create_user(**form.cleaned_data)
@@ -129,7 +127,7 @@ class SignupView(CreateView):
 
                 errors.append(err)
 
-        errors = [err[0] for err in list(form.errors.values())]
+        errors += [err[0] for err in list(form.errors.values())]
         errors = '      '.join(set(errors))
 
         return render(request, self.template_name, {"form": form, "errors": errors})
@@ -164,10 +162,26 @@ class ProfileView(TemplateView, ModelFormMixin):
 
     def get(self, request, *args, **kwargs):
         self.object = request.user
-
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["items"] = Item.manager.get_favorite(self.object, Tag)
         return context
+
+    def post(self, request, *args, **kwargs):
+        errors = []
+
+        user = request.user
+        form = EditProfileForm(request.POST)
+
+        if form.is_valid():
+
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.profile.birthday = form.cleaned_data['birthday']
+
+            if not errors:
+                user.save()
+                user.profile.save()
+        return self.get(request, *args, **kwargs)

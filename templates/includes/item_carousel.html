@@ -24,7 +24,7 @@
             <div style="height: 180px; margin: auto 0">
 
               <h1>{{ item.name }}</h1>
-              <p>{{ item.text|truncatewords:10 }}</p>
+              <p>{{ item.text|safe }}</p>
 
               <button type="button"
                       class="btn btn-outline-danger">{{ item.category.name }}</button>
