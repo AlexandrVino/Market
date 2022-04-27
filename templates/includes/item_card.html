@@ -1,5 +1,5 @@
 <div class="col"
-     style="border: none; padding: 0; min-width: 30%;
+         style="border: none; padding: 0; min-width: 30%;
          max-width: 30%;margin: 30px 0 0 0; cursor: pointer">
   <a href="{% url 'catalog' %}{{ item.id }}" style="text-decoration: none; color: #fff">
     <div class="card shadow-sm" style="border-radius: 10px;">
@@ -13,25 +13,25 @@
         <p class="card-text">{{ item.text|truncatewords:10 }}</p>
         <div class="d-flex justify-content-between align-items-center">
 
-          <div>
-            <button type="button"
-                    class="btn btn-outline-danger">{{ item.category.name }}</button>
-
-            <div style="margin-top: 10px; width: 342px">
-
-
-              {% for item_tag in item.tags.all|slice:":3" %}
+              <div>
                 <button type="button"
-                        class="btn btn-outline-light">{{ item_tag.name }}</button>
-              {% endfor %}
+                        class="btn btn-outline-danger">{{ item.category.name }}</button>
+
+                <div style="margin-top: 10px; width: 342px">
+
+
+                    {% for item_tag in item.tags.all|slice:":3" %}
+                      <button type="button"
+                              class="btn btn-outline-light">{{ item_tag.name }}</button>
+                    {% endfor %}
+
+                </div>
+
+              </div>
+
 
             </div>
-
           </div>
-
-
         </div>
-      </div>
+      </a>
     </div>
-  </a>
-</div>
