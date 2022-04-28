@@ -45,7 +45,8 @@ class Rating(models.Model):
     class Meta:
         # Устанавливаем уникальноть,
         # что связка (товар - юзер) может встречаться один раз
-        constraints = [models.UniqueConstraint(fields=["user", "item"], name="unique")]
+        constraints = [
+            models.UniqueConstraint(fields=["user", "item"], name="unique")]
 
         verbose_name = "Оценка"
         verbose_name_plural = "Оценки"

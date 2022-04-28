@@ -8,7 +8,8 @@ class Base(models.Model):
     Базовый абстрактный класс моделей
     """
 
-    is_published = models.BooleanField(default=True, verbose_name="Опубликовано")
+    is_published = models.BooleanField(default=True,
+                                       verbose_name="Опубликовано")
 
     class Meta:
         abstract = True

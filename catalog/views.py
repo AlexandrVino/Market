@@ -64,7 +64,8 @@ class ItemDetailView(DetailView):
             .aggregate(Avg("star"), Count("star"))
         )
 
-        gallery = ItemGallery.manager.get_objects_with_filter(item_id=context["item"].id)
+        gallery = ItemGallery.manager.get_objects_with_filter(
+            item_id=context["item"].id)
 
         context["rating"] = rating if rating["star__avg"] else ""
 

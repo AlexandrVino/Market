@@ -17,7 +17,8 @@ class HomeView(ListView):
 
     def get_queryset(self):
         ides = list(
-            Item.manager.get_objects_with_filter(is_published=True).values_list(
+            Item.manager.get_objects_with_filter(
+                is_published=True).values_list(
                 "id", flat=True
             )
         )

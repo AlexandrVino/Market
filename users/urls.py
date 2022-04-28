@@ -9,14 +9,8 @@ from django.contrib.auth.views import (
 )
 from django.urls import path
 
-from users.views import (
-    AcitvateView,
-    ProfileView,
-    SignupView,
-    UserDetailView,
-    UserListView,
-    LoginWithEmailView,
-)
+from users.views import (ActivateView, LoginWithEmailView, ProfileView,
+                         SignupView, UserDetailView, UserListView)
 
 urlpatterns = [
     # path('login/',
@@ -24,23 +18,26 @@ urlpatterns = [
     #      name='login'),
     path("login/", LoginWithEmailView.as_view(), name="login"),
     path(
-        "logout/", LogoutView.as_view(template_name="users/logout.html"), name="logout"
+        "logout/", LogoutView.as_view(template_name="users/logout.html"),
+        name="logout"
     ),
     path("signup/", SignupView.as_view(), name="signup"),
     path(
         r"activate/(?P<uidb64>[0-9A-Za-z_\-]+)/"
         "(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/",
-        AcitvateView.as_view(),
+        ActivateView.as_view(),
         name="activate",
     ),
     path(
         "password_change/",
-        PasswordChangeView.as_view(template_name="users/password_change_form.html"),
+        PasswordChangeView.as_view(
+            template_name="users/password_change_form.html"),
         name="password_change",
     ),
     path(
         "password_change/done/",
-        PasswordChangeDoneView.as_view(template_name="users/password_change_done.html"),
+        PasswordChangeDoneView.as_view(
+            template_name="users/password_change_done.html"),
         name="password_change_done",
     ),
     path(
@@ -53,7 +50,8 @@ urlpatterns = [
     ),
     path(
         "password_reset/done/",
-        PasswordResetDoneView.as_view(template_name="users/password_reset_done.html"),
+        PasswordResetDoneView.as_view(
+            template_name="users/password_reset_done.html"),
         name="password_reset_done",
     ),
     path(

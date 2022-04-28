@@ -3,7 +3,8 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.safestring import mark_safe
 
-from catalog.managers import CategoriesManager, ItemGalleryManager, ItemsManager
+from catalog.managers import CategoriesManager, ItemGalleryManager, \
+    ItemsManager
 from core.managers import BaseManager
 from core.models import Base, BaseSlug, DefaultGallery
 from core.validators import validate_catalog_text
@@ -62,7 +63,8 @@ class Item(Base):
     manager = ItemsManager()
 
     name = models.CharField(
-        max_length=150, verbose_name="Название", help_text="Максимум 150 символов"
+        max_length=150, verbose_name="Название",
+        help_text="Максимум 150 символов"
     )
 
     text = RichTextField(
@@ -83,7 +85,8 @@ class Item(Base):
     tags = models.ManyToManyField(Tag, default=None, verbose_name="Тэги")
 
     main_image = models.ImageField(
-        upload_to="uploads/", null=True, blank=True, verbose_name="Главное изображение"
+        upload_to="uploads/", null=True, blank=True,
+        verbose_name="Главное изображение"
     )
 
     def image_tmb(self):
@@ -117,4 +120,3 @@ class ItemGallery(DefaultGallery):
         abstract = False
         verbose_name = "Картинка"
         verbose_name_plural = "Картинки"
-

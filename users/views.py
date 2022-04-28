@@ -134,10 +134,11 @@ class SignupView(CreateView):
         errors += [err[0] for err in list(form.errors.values())]
         errors = "      ".join(set(errors))
 
-        return render(request, self.template_name, {"form": form, "errors": errors})
+        return render(request, self.template_name,
+                      {"form": form, "errors": errors})
 
 
-class AcitvateView(View):
+class ActivateView(View):
     def get(self, request, uidb64, token):
         try:
             uid = force_text(urlsafe_base64_decode(uidb64))
@@ -146,7 +147,8 @@ class AcitvateView(View):
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
 
-        if user is not None and default_token_generator.check_token(user, token):
+        if user is not None and default_token_generator.check_token(user,
+                                                                    token):
             user.is_active = True
             user.save()
 
