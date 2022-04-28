@@ -1,32 +1,43 @@
-from http import HTTPStatus
-from random import sample
+from django.views.generic.list import ListView
 
-from django.http import HttpResponse
-from django.shortcuts import render
+from random import sample
 
 from catalog.models import Item, Tag
 
-HOMEPAGE_TEMPLATE = 'homepage/home.html'
+HOMEPAGE_TEMPLATE = "homepage/home.html"
 ITEMS_COUNT = 4
 
 
-def home(request) -> HttpResponse:
-    """
-    Возвращает главную страничку сайта
-    """
+class HomeView(ListView):
+    """Возвращает главную страничку сайта"""
 
-    ides = list(Item.manager.get_objects_with_filter(
-        is_published=True).values_list('id', flat=True))
+    template_name = HOMEPAGE_TEMPLATE
+    model = Item
+    context_object_name = "items"
 
-    if len(ides) > ITEMS_COUNT:
-        ides = sample(ides, ITEMS_COUNT)
+    def get_queryset(self):
+        ides = list(
+            Item.manager.get_objects_with_filter(is_published=True).values_list(
+                "id", flat=True
+            )
+        )
 
-    items = Item.manager.join_tags(
-        Tag, None, 'name', 'text', 'tags__name',
-        'category__name', is_published=True, pk__in=ides)
+        if len(ides) > ITEMS_COUNT:
+            ides = sample(ides, ITEMS_COUNT)
 
-    return render(
-        request, HOMEPAGE_TEMPLATE, status=HTTPStatus.OK,
-        context={'items': items, 'range': range(len(items))},
-        content_type='text/html'
-    )
+        return Item.manager.join_tags(
+            Tag,
+            None,
+            "name",
+            "text",
+            "tags__name",
+            "upload",
+            "category__name",
+            is_published=True,
+            pk__in=ides,
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["range"] = range(len(context["items"]))
+        return context

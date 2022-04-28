@@ -7,13 +7,14 @@
   <script type="text/javascript" src={% static "js/rate_item.js" %}></script>
 {% endblock %}
 {% block content %}
-  <div style="display: flex; padding: 30px; justify-content: space-between; height: 250px; position: relative">
+  <div style="display: flex; padding: 30px; justify-content: space-between; height: 400px; position: relative">
 
     <div style="display: flex; justify-content: space-between; width: 100%">
 
       <div style="margin: auto 0">
         <h4 style="padding-bottom: 10px">{{ item.name }}</h4>
-        <p class="card-text">{{ item.text|truncatewords:10 }}</p>
+        <p class="card-text">{{ item.text|safe }}</p>
+
         {% if rating %}
           <p class="rating">{{ rating.star__avg }}
             звезд/{{ rating.star__count }}
@@ -21,14 +22,7 @@
         {% else %}
           <p class="rating">Оценки отсутсвуют</p>
         {% endif %}
-      </div>
-      <div style="display: flex; margin: auto 0; transition: 0.7s linear;"
-           id="item_info">
-        <div style="margin-right: 20px">
-          <p style="margin: 0; height: 38px; line-height: 38px">Категория: </p>
-          <p style="margin: 10px 0 0 0; height: 38px; line-height: 38px">
-            Теги: </p>
-        </div>
+
         <div>
           <div class="button-group">
             <button type="button"
@@ -49,6 +43,10 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div style="margin: auto 0">
+        <img src="{{ item.get_image_url }}" alt="{{ item.get_image_url }}" width="300px" id="item_image">
       </div>
     </div>
 

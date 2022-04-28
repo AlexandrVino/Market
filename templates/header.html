@@ -1,7 +1,7 @@
+{% load static %}
 <header class="p-3 bg-dark text-white" style="border-radius: 10px 10px 0 0;">
   <div class="container">
-    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-
+    <div class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar">
       <a href="/"
          class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
         <svg class="bi me-2" width="40" height="32" role="img"
@@ -9,14 +9,20 @@
           <use xlink:href="#bootstrap"></use>
         </svg>
       </a>
-
-      <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+      <a href="{% url 'home' %}"
+         class="nav-link px-2"><img height="50px" src="{% static '/img/Logo.png' %}"></a>
+      <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 mb-md-0">
         <li>
           <a href="{% url 'home' %}"
-             class="nav-link px-2 text-secondary">Главная</a></li>
+             class="nav-link px-2 text-secondary">Главная</a>
+        </li>
         <li>
           <a href="{% url 'catalog' %}"
              class="nav-link px-2 text-white">Каталог</a>
+        </li>
+        <li>
+          <a href="{% url 'users' %}"
+             class="nav-link px-2 text-white">Пользователи</a>
         </li>
         <li>
           <a href="#" class="nav-link px-2 text-white">FAQs</a>
@@ -25,6 +31,12 @@
           <a href="{% url 'about' %}"
              class="nav-link px-2 text-white">О Нас</a>
         </li>
+        {% if request.user.is_superuser %}
+          <li>
+            <a href="{% url 'admin:index' %}"
+               class="nav-link px-2 text-white">Админка</a>
+          </li>
+        {% endif %}
       </ul>
 
       <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
@@ -46,4 +58,12 @@
       </div>
     </div>
   </div>
+  {% if birthday_list %}
+
+    <marquee scrollamount='7'>Наши именинники:
+      {% for birthday in birthday_list %}
+        <a class="text-white" href="{% url 'user_detail' birthday.user.id %}">{{ birthday.user.username }}</a>
+      {% endfor %}
+    </marquee>
+  {% endif %}
 </header>

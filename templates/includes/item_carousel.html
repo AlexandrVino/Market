@@ -17,20 +17,26 @@
 
       <div class="carousel-item{% if item == items.first %} active{% endif %}"
            data-bs-interval="4000"
-           style="height: 280px; margin-bottom: 50px">
+           style="height: 400px; margin-bottom: 50px; ">
         <a href="{% url 'catalog' %}{{ item.id }}"
            style="text-decoration: none">
-          <div class="carousel-caption text-start text-white">
-            <h1>{{ item.name }}</h1>
-            <p>{{ item.text|truncatewords:10 }}</p>
+          <div class="carousel-caption text-start text-white" style="display: flex; justify-content: space-between; height: 320px;">
+            <div style="height: 180px; margin: auto 0">
 
-            <button type="button"
-                    class="btn btn-outline-danger">{{ item.category.name }}</button>
-            <div style="margin-top: 10px">
-              {% for item_tag in item.tags.all %}
-                <button type="button"
-                        class="btn btn-outline-light">{{ item_tag.name }}</button>
-              {% endfor %}
+              <h1>{{ item.name }}</h1>
+              <p>{{ item.text|safe }}</p>
+
+              <button type="button"
+                      class="btn btn-outline-danger">{{ item.category.name }}</button>
+              <div style="margin-top: 10px">
+                {% for item_tag in item.tags.all %}
+                  <button type="button"
+                          class="btn btn-outline-light">{{ item_tag.name }}</button>
+                {% endfor %}
+              </div>
+            </div>
+            <div style="margin: auto 0">
+              <img src="{{ item.get_image_url }}" alt="{{ item.get_image_url }}" width="300px">
             </div>
 
 

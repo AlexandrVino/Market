@@ -6,8 +6,7 @@ class Base(models.Model):
     Базовый абстрактный класс моделей
     """
 
-    is_published = models.BooleanField(default=True,
-                                       verbose_name='Опубликовано')
+    is_published = models.BooleanField(default=True, verbose_name="Опубликовано")
 
     class Meta:
         abstract = True
@@ -19,8 +18,11 @@ class BaseSlug(Base):
     """
 
     slug = models.SlugField(
-        max_length=200, unique=True,
-        help_text='Максимум 200 символов', verbose_name='Название')
+        max_length=200,
+        unique=True,
+        help_text="Максимум 200 символов",
+        verbose_name="Название",
+    )
 
     class Meta:
         abstract = True

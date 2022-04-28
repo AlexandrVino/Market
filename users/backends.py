@@ -7,7 +7,7 @@ User = get_user_model()
 
 class EmailUniqueFailed(BaseException):
     def __str__(self):
-        return 'Пользователь с этой почтой уже есть'
+        return "Пользователь с этой почтой уже есть"
 
 
 class EmailAuthBackend:
@@ -24,10 +24,10 @@ class EmailAuthBackend:
 
     @staticmethod
     def create_user(email=None, username=None, password1=None, password2=None):
-        """ Create a new user profile """
+        """Create a new user profile"""
 
         if not email:
-            raise ValueError('User must have an email address')
+            raise ValueError("User must have an email address")
 
         if User.objects.filter(email=email):
             raise EmailUniqueFailed()

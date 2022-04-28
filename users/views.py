@@ -1,218 +1,191 @@
-from http import HTTPStatus
-
 from django.contrib.auth import get_user_model, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.db import IntegrityError, models
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.views import View
+from django.views.generic.base import TemplateView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, FormView, ModelFormMixin
+from django.views.generic.list import ListView
 
 from catalog.models import Item, Tag
 from .backends import EmailAuthBackend, EmailUniqueFailed
 from .forms import EditProfileForm, LoginForm, RegisterForm
 
-USER_LIST_TEMPLATE = 'users/user_list.html'
-CUR_USER_TEMPLATE = 'users/user_detail.html'
-SIGNUP_TEMPLATE = 'users/signup.html'
-LOGIN_WITH_USERNAME_TEMPLATE = 'users/login_with_username.html'
-LOGIN_WITH_EMAIL_TEMPLATE = 'users/login_with_email.html'
-PROFILE_TEMPLATE = 'users/profile.html'
+USER_LIST_TEMPLATE = "users/user_list.html"
+CUR_USER_TEMPLATE = "users/user_detail.html"
+SIGNUP_TEMPLATE = "users/signup.html"
+LOGIN_WITH_USERNAME_TEMPLATE = "users/login_with_username.html"
+LOGIN_WITH_EMAIL_TEMPLATE = "users/login_with_email.html"
+PROFILE_TEMPLATE = "users/profile.html"
 
 User: models.Model = get_user_model()
 
 
-def user_list(request) -> HttpResponse:
-    """
-    Возвращает страничку Списка пользователей
-    """
+class UserListView(ListView):
+    """Возвращает страничку Списка пользователей"""
 
-    users = User.objects.select_related('profile')
-
-    return render(
-        request, USER_LIST_TEMPLATE, status=HTTPStatus.OK, context={
-            'users': users
-        },
-        content_type='text/html'
-    )
+    template_name = USER_LIST_TEMPLATE
+    queryset = User.objects.select_related("profile")
+    context_object_name = "users"
 
 
-def user_detail(request, user_id: int) -> HttpResponse:
-    """
-    Возвращает страничку конкретного пользователя
-    """
+class UserDetailView(DetailView):
+    """Возвращает страничку конкретного пользователя"""
 
-    # В условии было сказано про то, что словарь контекста должен быть пустым
-    # Но мне показалось логичным передавать айди пользователя
+    template_name = CUR_USER_TEMPLATE
+    model = User
+    context_object_name = "user"
+    pk_url_kwarg = "user_id"
 
-    user = get_object_or_404(User, id=user_id)
-    items = Item.manager.get_favorite(user, Tag)
-
-    return render(
-        request, CUR_USER_TEMPLATE, status=HTTPStatus.OK,
-        context={'user': user, 'items': items}, content_type='text/html'
-    )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["items"] = Item.manager.get_favorite(self.get_object(), Tag)
+        return context
 
 
-def login_with_email_view(request) -> HttpResponse:
-    """
-    Возвращает страничку регистрации пользователя
-    """
+class LoginWithEmailView(FormView):
+    """Возвращает страничку регистрации пользователя"""
 
-    if request.user.is_authenticated:
-        return redirect('/auth/profile', status=HTTPStatus.OK,
-                        context={}, content_type='text/html')
+    form_class = LoginForm
+    template_name = LOGIN_WITH_EMAIL_TEMPLATE
 
-    form = LoginForm(request.POST or None)
-    if form.is_valid():
+    def get_success_url(self):
+        return reverse("profile")
 
-        email = form.cleaned_data['email']
-        password = form.cleaned_data['password']
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
 
-        user = EmailAuthBackend.authenticate(
-            request, email=email, password=password
-        )
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
 
-        if user is not None:
-            if user.is_active:
-                EmailAuthBackend.authenticate(request, email, password)
-                return redirect(
-                    '/auth/profile', status=HTTPStatus.OK,
-                    context={},
-                    content_type='text/html')
+            user = EmailAuthBackend.authenticate(
+                request, email=email, password=password
+            )
 
-    return render(
-        request, LOGIN_WITH_EMAIL_TEMPLATE, status=HTTPStatus.OK,
-        context={"form": form},
-        content_type='text/html'
-    )
+            if user is not None:
+                if user.is_active:
+                    EmailAuthBackend.authenticate(request, email, password)
+                    return redirect(self.get_success_url())
+
+        return super().post(request, *args, **kwargs)
 
 
-def logout_view(request) -> HttpResponse:
-    """
-    Возвращает страничку регистрации пользователя
-    """
+class SignupView(CreateView):
+    """Регистрация"""
 
-    if request.user.is_authenticated:
-        logout(request)
+    template_name = SIGNUP_TEMPLATE
+    model = User
+    form_class = RegisterForm
 
-        return redirect('/', status=HTTPStatus.OK,
-                        context={}, content_type='text/html')
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            logout(request)
+        return super().get(request, *args, **kwargs)
 
-    form_login = LoginForm()
-    return render(
-        request, LOGIN_WITH_USERNAME_TEMPLATE, status=HTTPStatus.OK,
-        context={"form_login": form_login},
-        content_type='text/html'
-    )
+    def get_success_url(self):
+        return reverse("profile")
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form_class()(request.POST)
+        errors = []
+        if form.is_valid():
+            try:
+                new_user = EmailAuthBackend.create_user(**form.cleaned_data)
+                current_site = get_current_site(request)
+                mail_subject = "Activation link has been sent to your email id"
+
+                message = render_to_string(
+                    "users/acc_active_email.html",
+                    {
+                        "user": new_user,
+                        "domain": current_site.domain,
+                        "uid": urlsafe_base64_encode(force_bytes(new_user.pk)),
+                        "token": default_token_generator.make_token(new_user),
+                    },
+                )
+
+                EmailMessage(mail_subject, message, to=[new_user.email]).send()
+                return HttpResponse("Подтвердите почту")
+
+            except (IntegrityError, ValidationError, EmailUniqueFailed) as err:
+                if type(err) is ValidationError:
+                    err = "\n".join(err.messages)
+
+                if type(err) is IntegrityError:
+                    err = "Пользователь с таким именем уже сооздан"
+
+                if type(err) is EmailUniqueFailed:
+                    err = str(err)
+
+                errors.append(err)
+
+        errors += [err[0] for err in list(form.errors.values())]
+        errors = "      ".join(set(errors))
+
+        return render(request, self.template_name, {"form": form, "errors": errors})
 
 
-def signup(request) -> HttpResponse:
-    errors = []
-
-    if request.user.is_authenticated:
-        logout(request)
-
-    form = RegisterForm(request.POST or None)
-
-    if form.is_valid() and not errors:
+class AcitvateView(View):
+    def get(self, request, uidb64, token):
         try:
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
 
-            new_user = EmailAuthBackend.create_user(**form.cleaned_data)
-            current_site = get_current_site(request)
-            mail_subject = 'Activation link has been sent to your email id'
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
 
-            message = render_to_string('users/acc_active_email.html', {
-                'user': new_user, 'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
-                'token': default_token_generator.make_token(new_user),
-            })
+        if user is not None and default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
 
-            EmailMessage(mail_subject, message, to=[new_user.email]).send()
-            return HttpResponse('Подтвердите почту')
-
-        except (IntegrityError, ValidationError, EmailUniqueFailed) as err:
-
-            if type(err) is ValidationError:
-                err = '\n'.join(err.messages)
-
-            if type(err) is IntegrityError:
-                err = 'Пользователь с таким именем уже сооздан'
-
-            if type(err) is EmailUniqueFailed:
-                err = str(err)
-
-            errors.append(err)
-
-    errors += [err[0] for err in list(form.errors.values())]
-    errors = '      '.join(set(errors))
-
-    return render(
-        request, SIGNUP_TEMPLATE, status=HTTPStatus.OK,
-        context={"form_login": form, 'errors': errors},
-        content_type='text/html'
-    )
+            return redirect("/auth/profile")
+        else:
+            return HttpResponse("Activation link is invalid!")
 
 
-def activate(request, uidb64, token):
-    try:
+@method_decorator(login_required, name="dispatch")
+class ProfileView(TemplateView, ModelFormMixin):
+    """Возвращает страничку профиля пользователя"""
 
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
+    template_name = PROFILE_TEMPLATE
+    context_object_name = "user"
+    model = User
+    form_class = EditProfileForm
 
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
+    def get(self, request, *args, **kwargs):
+        self.object = request.user
+        return super().get(request, *args, **kwargs)
 
-    if user is not None and default_token_generator.check_token(user, token):
-        user.is_active = True
-        user.save()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["items"] = Item.manager.get_favorite(self.object, Tag)
+        return context
 
-        return redirect('/auth/profile', status=HTTPStatus.OK,
-                        context={}, content_type='text/html')
-    else:
-        return HttpResponse('Activation link is invalid!')
+    def post(self, request, *args, **kwargs):
+        errors = []
 
-
-def profile(request) -> HttpResponse:
-    """
-    Возвращает страничку профиля пользователя
-    """
-
-    user = request.user
-    # if user.email is not None:
-    #     send_mail("Тест", 'Тест', 'admin@example.com', [user.email],
-    #               fail_silently=False)
-
-    if not user.is_authenticated:
-        return redirect('login')
-
-    errors = []
-
-    if request.POST:
+        user = request.user
         form = EditProfileForm(request.POST)
 
         if form.is_valid():
 
-            user.first_name = form.cleaned_data['first_name']
-            user.last_name = form.cleaned_data['last_name']
-            user.profile.birthday = form.cleaned_data['birthday']
+            user.first_name = form.cleaned_data["first_name"]
+            user.last_name = form.cleaned_data["last_name"]
+            user.profile.birthday = form.cleaned_data["birthday"]
 
             if not errors:
                 user.save()
-
-    else:
-        form = EditProfileForm(instance=user)
-
-    items = Item.manager.get_favorite(user, Tag)
-
-    return render(
-        request, PROFILE_TEMPLATE, status=HTTPStatus.OK, context={
-            'user': user, 'items': items,
-            'form': form, 'errors': '\n'.join(errors)
-        },
-        content_type='text/html'
-    )
+                user.profile.save()
+        return self.get(request, *args, **kwargs)
