@@ -83,22 +83,22 @@ class Item(Base):
 
     tags = models.ManyToManyField(Tag, default=None, verbose_name="Тэги")
 
-    upload = models.ImageField(upload_to='uploads/', null=True, blank=True)
+    upload = models.ImageField(
+        upload_to="uploads/", null=True, blank=True, verbose_name="Картинка"
+    )
 
     def get_image_x1280(self):
-        return get_thumbnail(self.upload, '1280', quality=51)
+        return get_thumbnail(self.upload, "1280", quality=51)
 
     def get_image_400x300(self):
-        return get_thumbnail(self.upload, '400x300', crop='center', quality=51)
+        return get_thumbnail(self.upload, "400x300", crop="center", quality=51)
 
     def image_tmb(self):
         if self.upload:
-            return mark_safe(
-                f'<img src="{self.upload.url}" width="50">'
-            )
-        return 'Нет изображения'
+            return mark_safe(f'<img src="{self.upload.url}" width="50">')
+        return "Нет изображения"
 
-    image_tmb.short_description = 'Превью'
+    image_tmb.short_description = "Превью"
     image_tmb.allow_tags = True
 
     def __str__(self):
@@ -106,8 +106,8 @@ class Item(Base):
 
     def get_image_url(self):
         if self.upload:
-            return f'{self.upload.url}'
-        return 'Нет изображения'
+            return f"{self.upload.url}"
+        return "Нет изображения"
 
     class Meta:
         verbose_name = "Товар"

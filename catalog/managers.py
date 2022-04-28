@@ -7,50 +7,65 @@ User = get_user_model()
 
 
 class ItemsManager(BaseManager):
-
     def join_tag(self, model, *args, **kwargs):
-        return self.model.manager.select_related('category').filter(
-            category__is_published=True).prefetch_related(
-            Prefetch(
-                'tags',
-                queryset=model.manager.filter(**kwargs).only('name'))).only(
-            *args)
+        return (
+            self.model.manager.select_related("category")
+            .filter(category__is_published=True)
+            .prefetch_related(
+                Prefetch("tags", queryset=model.manager.filter(**kwargs).only("name"))
+            )
+            .only(*args)
+        )
 
     def join_tags(self, model, items=None, *args, **kwargs):
         if items is None:
             items = self.get_objects_with_filter(**kwargs)
 
-        return items.select_related('category').filter(
-            category__is_published=True).order_by('category').prefetch_related(
-            Prefetch(
-                'tags',
-                queryset=model.manager.filter(is_published=True).only(
-                    'name'))).only(*args)
+        return (
+            items.select_related("category")
+            .filter(category__is_published=True)
+            .order_by("category")
+            .prefetch_related(
+                Prefetch(
+                    "tags",
+                    queryset=model.manager.filter(is_published=True).only("name"),
+                )
+            )
+            .only(*args)
+        )
 
     def join_users(self, user, items=None, *args, **kwargs):
         if items is None:
             items = self.get_objects_with_filter(**kwargs)
 
-        return items.select_related('category').filter(
-            category__is_published=True).order_by('category').prefetch_related(
-            Prefetch(
-                'users',
-                queryset=User.objects.filter(rating__user=user).only(
-                    'name'))).only(*args)
+        return (
+            items.select_related("category")
+            .filter(category__is_published=True)
+            .order_by("category")
+            .prefetch_related(
+                Prefetch(
+                    "users",
+                    queryset=User.objects.filter(rating__user=user).only("name"),
+                )
+            )
+            .only(*args)
+        )
 
     def get_favorite(self, user, tag_model, *args, **kwargs):
 
         return self.join_tags(
-            tag_model, items=self.get_objects_with_filter(
-                rating__user__exact=user, rating__star=5, **kwargs))
+            tag_model,
+            items=self.get_objects_with_filter(
+                rating__user__exact=user, rating__star=5, **kwargs
+            ),
+        )
 
 
 class CategoriesManager(BaseManager):
     def join_items(self, categories=None, *args, **kwargs):
         if categories is None:
             categories = self.get_objects_with_filter(**kwargs)
-        return categories.prefetch_related('item_set').only(
-            *args)
+        return categories.prefetch_related("item_set").only(*args)
 
     def sorted(self, categories=None, **kwargs) -> list:
         if categories is None:

@@ -11,11 +11,12 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birthday = models.DateField(
-        blank=True, verbose_name='День рождения', default=None, null=True)
+        blank=True, verbose_name="День рождения", default=None, null=True
+    )
 
     def __str__(self):
         return str(self.user)
 
     class Meta:
-        verbose_name = 'Дополнительное поле'
-        verbose_name_plural = 'Дополнительное поля'
+        verbose_name = "Дополнительное поле"
+        verbose_name_plural = "Дополнительное поля"

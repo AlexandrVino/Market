@@ -8,8 +8,8 @@ from rating.models import Rating
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 
-ALL_ITEMS_TEMPLATE = 'catalog/item_list.html'
-CUR_ITEM_TEMPLATE = 'catalog/item_detail.html'
+ALL_ITEMS_TEMPLATE = "catalog/item_list.html"
+CUR_ITEM_TEMPLATE = "catalog/item_detail.html"
 
 
 class ItemListView(ListView):
@@ -20,8 +20,13 @@ class ItemListView(ListView):
 
     def get_queryset(self):
         return Item.manager.join_tags(
-            Tag, None,
-            'name', 'text', 'tags__name', 'upload', 'category__name',
+            Tag,
+            None,
+            "name",
+            "text",
+            "tags__name",
+            "upload",
+            "category__name",
             is_published=True,
         )
 
@@ -42,7 +47,11 @@ class ItemDetailView(DetailView):
     def get_queryset(self, **kwargs):
         return Item.manager.join_tag(
             Tag,
-            'name', 'text', 'tags__name', 'category__name', 'upload',
+            "name",
+            "text",
+            "tags__name",
+            "category__name",
+            "upload",
             is_published=True,
         ).filter(is_published=True)
 
@@ -53,9 +62,9 @@ class ItemDetailView(DetailView):
         rating = (
             Rating.manager.filter(item=context["item"])
             .exclude(star=0)
-            .aggregate(Avg('star'), Count('star'))
+            .aggregate(Avg("star"), Count("star"))
         )
-        context["rating"] = rating if rating['star__avg'] else ''
+        context["rating"] = rating if rating["star__avg"] else ""
 
         return context
 
@@ -65,9 +74,9 @@ class ItemDetailView(DetailView):
 
         if form.is_valid():
             if not request.user.is_authenticated:
-                return redirect('login', content_type='text/html')
+                return redirect("login", content_type="text/html")
 
-            rate = form.cleaned_data['star']
+            rate = form.cleaned_data["star"]
 
             cur_rate, _ = Rating.manager.get_or_create(
                 user_id=request.user.id, item_id=pk
@@ -75,7 +84,7 @@ class ItemDetailView(DetailView):
             cur_rate.star = rate
             cur_rate.save()
 
-            return redirect('curr_item', pk=pk)
+            return redirect("curr_item", pk=pk)
 
         context = self.get_context_data()
         context["form"] = form

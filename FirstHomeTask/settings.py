@@ -11,33 +11,31 @@ env = environ.Env(
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env.read_env(os.path.join(BASE_DIR, '.env'))
+env.read_env(os.path.join(BASE_DIR, ".env"))
 
-DEBUG = env.bool('DEBUG')
+DEBUG = env.bool("DEBUG")
 
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env("SECRET_KEY")
 
 ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    'core.apps.CoreConfig',
-    'about.apps.AboutConfig',
-    'users.apps.UsersConfig',
-    'homepage.apps.HomepageConfig',
-    'rating.apps.RatingConfig',
-    'catalog.apps.CatalogConfig',
-
-    'debug_toolbar',
-    'sorl.thumbnail',
-    'django_cleanup.apps.CleanupConfig',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "core.apps.CoreConfig",
+    "about.apps.AboutConfig",
+    "users.apps.UsersConfig",
+    "homepage.apps.HomepageConfig",
+    "rating.apps.RatingConfig",
+    "catalog.apps.CatalogConfig",
+    "debug_toolbar",
+    "sorl.thumbnail",
+    "django_cleanup.apps.CleanupConfig",
     "ckeditor",
 ]
 
@@ -147,5 +145,5 @@ CKEDITOR_CONFIGS = {
     "awesome_ckeditor": {"toolbar": "Advanced", "skin": "moono"},
 }
 
-MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"

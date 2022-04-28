@@ -1,6 +1,6 @@
 from django.views.generic.base import TemplateView
 
-ABOUT_TEMPLATE = 'about/description.html'
+ABOUT_TEMPLATE = "about/description.html"
 
 
 class DescriptionView(TemplateView):

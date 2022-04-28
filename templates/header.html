@@ -62,7 +62,7 @@
 
     <marquee scrollamount='7'>Наши именинники:
       {% for birthday in birthday_list %}
-        <a class="text-white" href="{% url 'user_detail' user.id %}">{{ birthday.user.username }}</a>
+        <a class="text-white" href="{% url 'user_detail' birthday.user.id %}">{{ birthday.user.username }}</a>
       {% endfor %}
     </marquee>
   {% endif %}

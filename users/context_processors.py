@@ -1,15 +1,18 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Prefetch
 from .models import Profile
-from datetime import datetime
+from django.utils import timezone
 
 User = get_user_model()
 
 
 def users_birthday(request):
-    cur_date = str(datetime.date(datetime.now()))[5:]
+    datetime_now = timezone.now()
+    now_day, now_month = datetime_now.day, datetime_now.month
     return {
-        "birthday_list": Profile.objects.filter(birthday__contains=cur_date).prefetch_related(
+        "birthday_list": Profile.objects.filter(
+            birthday__day=now_day, birthday__month=now_month
+        ).prefetch_related(
             Prefetch(
                 "user",
                 queryset=User.objects.all(),
