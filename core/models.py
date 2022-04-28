@@ -31,15 +31,8 @@ class BaseSlug(Base):
 
 
 class DefaultGallery(models.Model):
-    verbose_name = "Картинки"
-
-    def __init__(self,  verbose_name=None, *args, **kwargs):
-        if verbose_name:
-            self.verbose_name = verbose_name
-        super().__init__(*args, **kwargs)
-
     image = models.ImageField(
-        upload_to="uploads/", null=True, blank=True, verbose_name=verbose_name
+        upload_to="uploads/", null=True, blank=True, verbose_name="Картинки"
     )
 
     def get_image_x1280(self):

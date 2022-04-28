@@ -69,7 +69,7 @@ class ItemDetailView(DetailView):
         context["rating"] = rating if rating["star__avg"] else ""
 
         context["gallery"] = gallery if gallery else []
-        context["range"] = range(len(gallery))
+        context["range"] = range(len(gallery) + 1) if gallery else range(0)
 
         return context
 

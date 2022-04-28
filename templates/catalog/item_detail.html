@@ -7,7 +7,7 @@
   <script type="text/javascript" src={% static "js/rate_item.js" %}></script>
 {% endblock %}
 {% block content %}
-  <div style="display: flex; padding: 30px; justify-content: space-between; height: 400px; position: relative">
+  <div style="display: flex; padding: 30px; justify-content: space-between; height: 500px; position: relative">
 
     <div style="display: flex; justify-content: space-between; width: 100%">
 
@@ -45,7 +45,7 @@
         </div>
       </div>
 
-      <div id="carouselControls" class="carousel carousel-dark slide"
+      <div id="carouselControls" class="carousel carousel-dark slide" style="width: 400px; height: 400px;"
            data-bs-ride="carousel">
 
         <div class="carousel-indicators">
@@ -59,31 +59,22 @@
 
         </div>
 
-        <div class="carousel-inner" id="carousel-inner">
+        <div class="carousel-inner" id="carousel-inner" style="width: 400px; height: 400px;">
 
+          <div class="carousel-item active" data-bs-interval="4000" style="width: 400px; height: 400px;">
 
-          <div class="carousel-item active"
-               data-bs-interval="4000"
-               style="height: 400px; margin-bottom: 50px; ">
-            <div class="carousel-caption text-start text-white"
-                 style="display: flex; justify-content: space-between; height: 320px;">
-              <div style="margin: auto 0">
-                <img src="{{ item.get_image_url }}" alt="{{ item.get_image_url }}" width="300px" id="item_image">
-              </div>
+            <div style="margin: 50px 50px 50px 50px; border: 1px solid #fff; overflow: hidden">
+              <img src="{{ item.get_image_url }}" alt="{{ item.get_image_url }}" height="300px" id="item_image">
             </div>
 
           </div>
 
           {% for image in gallery %}
 
-            <div class="carousel-item"
-                 data-bs-interval="4000"
-                 style="height: 400px; margin-bottom: 50px; ">
-              <div class="carousel-caption text-start text-white"
-                   style="display: flex; justify-content: space-between; height: 320px;">
-                <div style="margin: auto 0">
-                  <img src="{{ image.get_image_url }}" alt="{{ image.get_image_url }}" width="300px">
-                </div>
+            <div class="carousel-item" data-bs-interval="4000" style="width: 400px; height: 400px;">
+
+              <div style="margin: 50px 50px 50px 50px; border: 1px solid #fff; overflow: hidden">
+                <img src="{{ image.get_image_url }}" alt="{{ image.get_image_url }}" height="300px">
               </div>
 
             </div>
@@ -103,6 +94,7 @@
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="visually-hidden">Next</span>
         </button>
+
       </div>
 
     </div>
