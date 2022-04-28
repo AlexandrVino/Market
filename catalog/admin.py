@@ -1,6 +1,10 @@
 from django.contrib import admin
 
-from catalog.models import Category, Item, Tag
+from catalog.models import Category, Item, ItemGallery, Tag
+
+
+class ImageInline(admin.TabularInline):
+    model = ItemGallery
 
 
 @admin.register(Item)
@@ -8,8 +12,9 @@ class ItemAdmin(admin.ModelAdmin):
     list_display = ("name", "is_published", "image_tmb")
     list_editable = ("is_published",)
     list_display_links = ("name",)
-
     filter_horizontal = ("tags",)
+
+    inlines = [ImageInline]
 
 
 @admin.register(Tag)

@@ -1,12 +1,11 @@
 from django.db.models import Avg, Count
 from django.shortcuts import redirect, render
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 
-from catalog.models import Item, Tag
+from catalog.models import Item, ItemGallery, Tag
 from rating.forms import AddRate
 from rating.models import Rating
-
-from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
 
 ALL_ITEMS_TEMPLATE = "catalog/item_list.html"
 CUR_ITEM_TEMPLATE = "catalog/item_detail.html"
@@ -25,7 +24,7 @@ class ItemListView(ListView):
             "name",
             "text",
             "tags__name",
-            "upload",
+            "main_image",
             "category__name",
             is_published=True,
         )
@@ -51,7 +50,7 @@ class ItemDetailView(DetailView):
             "text",
             "tags__name",
             "category__name",
-            "upload",
+            "main_image",
             is_published=True,
         ).filter(is_published=True)
 
@@ -64,7 +63,13 @@ class ItemDetailView(DetailView):
             .exclude(star=0)
             .aggregate(Avg("star"), Count("star"))
         )
+
+        gallery = ItemGallery.manager.get_objects_with_filter(item_id=context["item"].id)
+
         context["rating"] = rating if rating["star__avg"] else ""
+
+        context["gallery"] = gallery if gallery else []
+        context["range"] = range(len(gallery))
 
         return context
 

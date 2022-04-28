@@ -1,6 +1,6 @@
-from django.views.generic.list import ListView
-
 from random import sample
+
+from django.views.generic.list import ListView
 
 from catalog.models import Item, Tag
 
@@ -31,7 +31,7 @@ class HomeView(ListView):
             "name",
             "text",
             "tags__name",
-            "upload",
+            "main_image",
             "category__name",
             is_published=True,
             pk__in=ides,

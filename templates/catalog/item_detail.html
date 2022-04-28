@@ -45,9 +45,66 @@
         </div>
       </div>
 
-      <div style="margin: auto 0">
-        <img src="{{ item.get_image_url }}" alt="{{ item.get_image_url }}" width="300px" id="item_image">
+      <div id="carouselControls" class="carousel carousel-dark slide"
+           data-bs-ride="carousel">
+
+        <div class="carousel-indicators">
+          {% for i in range %}
+
+            <button type="button" data-bs-target="#carouselControls"{% if i == 0 %}
+                    class="active" aria-current="true"{% endif %}
+                    data-bs-slide-to="{{ i }}"></button>
+
+          {% endfor %}
+
+        </div>
+
+        <div class="carousel-inner" id="carousel-inner">
+
+
+          <div class="carousel-item active"
+               data-bs-interval="4000"
+               style="height: 400px; margin-bottom: 50px; ">
+            <div class="carousel-caption text-start text-white"
+                 style="display: flex; justify-content: space-between; height: 320px;">
+              <div style="margin: auto 0">
+                <img src="{{ item.get_image_url }}" alt="{{ item.get_image_url }}" width="300px" id="item_image">
+              </div>
+            </div>
+
+          </div>
+
+          {% for image in gallery %}
+
+            <div class="carousel-item"
+                 data-bs-interval="4000"
+                 style="height: 400px; margin-bottom: 50px; ">
+              <div class="carousel-caption text-start text-white"
+                   style="display: flex; justify-content: space-between; height: 320px;">
+                <div style="margin: auto 0">
+                  <img src="{{ image.get_image_url }}" alt="{{ image.get_image_url }}" width="300px">
+                </div>
+              </div>
+
+            </div>
+
+          {% endfor %}
+        </div>
+
+        <button class="carousel-control-prev" type="button"
+                data-href-template="#carouselControls"
+                data-bs-target="#carouselControls" data-bs-slide="prev" id="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button"
+                data-href-template="#carouselControls"
+                data-bs-target="#carouselControls" data-bs-slide="next" id="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
       </div>
+
     </div>
 
     <div class="form-wrapper bg-dark"

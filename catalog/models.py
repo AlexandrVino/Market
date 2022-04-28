@@ -1,13 +1,12 @@
+from ckeditor.fields import RichTextField
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.safestring import mark_safe
-from sorl.thumbnail import get_thumbnail
 
-from catalog.managers import CategoriesManager, ItemsManager
+from catalog.managers import CategoriesManager, ItemGalleryManager, ItemsManager
 from core.managers import BaseManager
-from core.models import Base, BaseSlug
+from core.models import Base, BaseSlug, DefaultGallery
 from core.validators import validate_catalog_text
-from ckeditor.fields import RichTextField
 
 
 class Tag(BaseSlug):
@@ -83,32 +82,39 @@ class Item(Base):
 
     tags = models.ManyToManyField(Tag, default=None, verbose_name="Тэги")
 
-    upload = models.ImageField(
-        upload_to="uploads/", null=True, blank=True, verbose_name="Картинка"
+    main_image = models.ImageField(
+        upload_to="uploads/", null=True, blank=True, verbose_name="Главное изображение"
     )
 
-    def get_image_x1280(self):
-        return get_thumbnail(self.upload, "1280", quality=51)
-
-    def get_image_400x300(self):
-        return get_thumbnail(self.upload, "400x300", crop="center", quality=51)
-
     def image_tmb(self):
-        if self.upload:
-            return mark_safe(f'<img src="{self.upload.url}" width="50">')
+        if self.main_image:
+            return mark_safe(f'<img src="{self.main_image.url}" width="50">')
         return "Нет изображения"
-
-    image_tmb.short_description = "Превью"
-    image_tmb.allow_tags = True
 
     def __str__(self):
         return self.name
 
     def get_image_url(self):
-        if self.upload:
-            return f"{self.upload.url}"
+        if self.main_image:
+            return f"{self.main_image.url}"
         return "Нет изображения"
 
     class Meta:
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
+
+
+class ItemGallery(DefaultGallery):
+    item = models.ForeignKey(Item, default=None, on_delete=models.CASCADE)
+    manager = ItemGalleryManager()
+
+    def get_image_url(self):
+        if self.image:
+            return f"{self.image.url}"
+        return "Нет изображения"
+
+    class Meta:
+        abstract = False
+        verbose_name = "Картинка"
+        verbose_name_plural = "Картинки"
+

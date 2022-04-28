@@ -10,11 +10,11 @@ class ItemsManager(BaseManager):
     def join_tag(self, model, *args, **kwargs):
         return (
             self.model.manager.select_related("category")
-            .filter(category__is_published=True)
-            .prefetch_related(
+                .filter(category__is_published=True)
+                .prefetch_related(
                 Prefetch("tags", queryset=model.manager.filter(**kwargs).only("name"))
             )
-            .only(*args)
+                .only(*args)
         )
 
     def join_tags(self, model, items=None, *args, **kwargs):
@@ -23,15 +23,15 @@ class ItemsManager(BaseManager):
 
         return (
             items.select_related("category")
-            .filter(category__is_published=True)
-            .order_by("category")
-            .prefetch_related(
+                .filter(category__is_published=True)
+                .order_by("category")
+                .prefetch_related(
                 Prefetch(
                     "tags",
                     queryset=model.manager.filter(is_published=True).only("name"),
                 )
             )
-            .only(*args)
+                .only(*args)
         )
 
     def join_users(self, user, items=None, *args, **kwargs):
@@ -40,15 +40,15 @@ class ItemsManager(BaseManager):
 
         return (
             items.select_related("category")
-            .filter(category__is_published=True)
-            .order_by("category")
-            .prefetch_related(
+                .filter(category__is_published=True)
+                .order_by("category")
+                .prefetch_related(
                 Prefetch(
                     "users",
                     queryset=User.objects.filter(rating__user=user).only("name"),
                 )
             )
-            .only(*args)
+                .only(*args)
         )
 
     def get_favorite(self, user, tag_model, *args, **kwargs):
@@ -72,3 +72,8 @@ class CategoriesManager(BaseManager):
             categories = self.get_objects_with_filter(**kwargs)
 
         return sorted(categories, key=lambda x: x.weight)
+
+
+class ItemGalleryManager(BaseManager):
+    pass
+
