@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from catalog.models import Category, ImageGallery, Item
+from catalog.models import Category, ImageGallery, Item, Tag
 
 
 class ImageGalleryInline(admin.TabularInline):
@@ -21,6 +21,7 @@ class ItemAdmin(admin.ModelAdmin):
         super().save_related(request, form, formsets, change)
 
 
+@admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = ("is_published", "slug")
     list_editable = ("is_published",)
