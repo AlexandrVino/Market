@@ -92,17 +92,29 @@ class Item(Base):
     # )
 
     def image_tmb(self):
-        if self.main_image:
-            return mark_safe(f'<img src="{self.main_image.url}" width="50">')
+        main_image = self.get_main_image()
+
+        if main_image:
+            return mark_safe(f'<img src="{main_image.image.url}" width="50">')
         return "Нет изображения"
 
     def __str__(self):
         return self.name
 
     def get_image_url(self):
-        if self.main_image:
-            return f"{self.main_image.url}"
+        main_image = self.get_main_image()
+
+        if main_image:
+            return f"{main_image.image.get.url}"
         return "Нет изображения"
+
+    def get_main_image(self):
+        main_image = self.item_gallery.filter(is_main=True)
+
+        if main_image:
+            return main_image.get()
+
+        return None
 
     class Meta:
         verbose_name = "Товар"
@@ -121,12 +133,13 @@ class ImageGallery(DefaultImageGallery):
     )
     manager = ItemGalleryManager()
 
-    def clean(self):
-        images = ImageGallery.manager.get_objects_with_filter(
-                item=self.item, is_main=True)
-        if images:
-            raise ValidationError("Только одна картинка может быть главной")
-        super(ImageGallery, self).clean()
+    # def clean(self):
+    #     super(ImageGallery, self).clean()
+
+    #     images = ImageGallery.manager.get_objects_with_filter(
+    #             item=self.item, is_main=True)
+    #     if images:
+    #         raise ValidationError("Только одна картинка может быть главной")
 
     class Meta:
         verbose_name = 'Картинка'
