@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from catalog.models import Category, Item, ItemGallery, Tag
+from catalog.models import Category, ImageGallery, Item
 
 
-class ImageInline(admin.TabularInline):
-    model = ItemGallery
+class ImageGalleryInline(admin.TabularInline):
+    model = ImageGallery
 
 
 @admin.register(Item)
@@ -14,10 +14,13 @@ class ItemAdmin(admin.ModelAdmin):
     list_display_links = ("name",)
     filter_horizontal = ("tags",)
 
-    inlines = [ImageInline]
+    inlines = [ImageGalleryInline]
+
+    def save_related(self, request, form, formsets, change):
+        # в этой функции он сохраняет релатид модели
+        super().save_related(request, form, formsets, change)
 
 
-@admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = ("is_published", "slug")
     list_editable = ("is_published",)

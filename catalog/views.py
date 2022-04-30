@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from catalog.models import Item, ItemGallery, Tag
+from catalog.models import ImageGallery, Item, Tag
 from rating.forms import AddRate
 from rating.models import Rating
 
@@ -64,7 +64,7 @@ class ItemDetailView(DetailView):
             .aggregate(Avg("star"), Count("star"))
         )
 
-        gallery = ItemGallery.manager.get_objects_with_filter(
+        gallery = ImageGallery.manager.get_objects_with_filter(
             item_id=context["item"].id)
 
         context["rating"] = rating if rating["star__avg"] else ""

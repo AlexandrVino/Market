@@ -1,12 +1,14 @@
 from ckeditor.fields import RichTextField
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Q
 from django.utils.safestring import mark_safe
 
 from catalog.managers import CategoriesManager, ItemGalleryManager, \
     ItemsManager
 from core.managers import BaseManager
-from core.models import Base, BaseSlug, DefaultGallery
+from core.models import Base, BaseSlug, DefaultImageGallery
 from core.validators import validate_catalog_text
 
 
@@ -84,10 +86,10 @@ class Item(Base):
 
     tags = models.ManyToManyField(Tag, default=None, verbose_name="Тэги")
 
-    main_image = models.ImageField(
-        upload_to="uploads/", null=True, blank=True,
-        verbose_name="Главное изображение"
-    )
+    # main_image = models.ImageField(
+    #     upload_to="uploads/", null=True, blank=True,
+    #     verbose_name="Главное изображение"
+    # )
 
     def image_tmb(self):
         if self.main_image:
@@ -107,16 +109,32 @@ class Item(Base):
         verbose_name_plural = "Товары"
 
 
-class ItemGallery(DefaultGallery):
-    item = models.ForeignKey(Item, default=None, on_delete=models.CASCADE)
+class ImageGallery(DefaultImageGallery):
+
+    item = models.ForeignKey(
+        Item, default=None, on_delete=models.CASCADE,
+        related_name='item_gallery'
+    )
+    is_main = models.BooleanField(
+        default=False,
+        verbose_name="Главное"
+    )
     manager = ItemGalleryManager()
 
-    def get_image_url(self):
-        if self.image:
-            return f"{self.image.url}"
-        return "Нет изображения"
+    def clean(self):
+        images = ImageGallery.manager.get_objects_with_filter(
+                item=self.item, is_main=True)
+        if images:
+            raise ValidationError("Только одна картинка может быть главной")
+        super(ImageGallery, self).clean()
 
     class Meta:
-        abstract = False
-        verbose_name = "Картинка"
-        verbose_name_plural = "Картинки"
+        verbose_name = 'Картинка'
+        verbose_name_plural = 'Картинки'
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["is_main", "item"],
+                condition=Q(is_main=True),
+                name="unique_main_image")
+        ]

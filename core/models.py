@@ -31,7 +31,7 @@ class BaseSlug(Base):
         abstract = True
 
 
-class DefaultGallery(models.Model):
+class DefaultImageGallery(models.Model):
     image = models.ImageField(
         upload_to="uploads/", null=True, blank=True, verbose_name="Картинки"
     )

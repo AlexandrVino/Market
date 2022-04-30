@@ -78,4 +78,14 @@ class CategoriesManager(BaseManager):
 
 
 class ItemGalleryManager(BaseManager):
-    pass
+    """
+    Пока класс ничего не делает, но во время разработки
+    добавится методы, которые будет он будет содержать
+    """
+
+    def join_images(self, galleries=None, *args, **kwargs):
+        if galleries is None:
+            galleries = self.get_objects_with_filter(**kwargs)
+        return galleries.prefetch_related(
+            Prefetch("item_gallery")
+        ).only(*args)
