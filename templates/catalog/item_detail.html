@@ -59,22 +59,14 @@
 
         </div>
 
-        <div class="carousel-inner" id="carousel-inner" style="width: 400px; height: 400px;">
-
-          <div class="carousel-item active" data-bs-interval="4000" style="width: 400px; height: 400px;">
-
-            <div style="margin: 50px 50px 50px 50px; border: 1px solid #fff; overflow: hidden">
-              <img src="{{ item.get_image_url }}" alt="{{ item.get_image_url }}" height="300px" id="item_image">
-            </div>
-
-          </div>
+        <div class="carousel-inner" id="carousel-inner" style="width: 400px; height: 400px;" >
 
           {% for image in gallery %}
 
             <div class="carousel-item" data-bs-interval="4000" style="width: 400px; height: 400px;">
 
-              <div style="margin: 50px 50px 50px 50px; border: 1px solid #fff; overflow: hidden">
-                <img src="{{ image.get_image_url }}" alt="{{ image.get_image_url }}" height="300px">
+              <div style="margin: 50px 50px 50px 50px;">
+                <img src="{{ image.get_image_url }}" alt="{{ image.get_image_url }}" width="300px" style="position: absolute; left: 0; top: 0; bottom: 0; right: 0; margin: auto;">
               </div>
 
             </div>

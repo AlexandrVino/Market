@@ -18,6 +18,7 @@ class Rating(models.Model):
         on_delete=models.CASCADE,
         default=None,
         help_text="Пожалуйста, укажите товар",
+        related_name='item_rating',
     )
 
     manager = RatingManager()

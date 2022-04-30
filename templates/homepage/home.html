@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
+{% load static %}
 {% block title %}Главная{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" type="text/css" href={% static "css/login.css" %}>
+  <script type="text/javascript" src={% static "js/home_page_carousel.js" %}></script>
+{% endblock %}
 
 {% block content %}
   {% include "includes/item_carousel.html" %}

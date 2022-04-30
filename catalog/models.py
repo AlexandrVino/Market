@@ -1,5 +1,4 @@
 from ckeditor.fields import RichTextField
-from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
@@ -105,7 +104,7 @@ class Item(Base):
         main_image = self.get_main_image()
 
         if main_image:
-            return f"{main_image.image.get.url}"
+            return f"{main_image.image.url}"
         return "Нет изображения"
 
     def get_main_image(self):

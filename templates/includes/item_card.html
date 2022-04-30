@@ -5,9 +5,14 @@
     <div class="card shadow-sm" style="border-radius: 10px;">
       <div class="card-body bg-dark text-white"
            style="border-radius: 10px;">
+
         <div style="height: 340px;margin-bottom: 20px; position: relative;">
-          <img src="{{ item.get_image_url }}" alt="{{ item.get_image_url }}"
+          {% for item_image in item.item_gallery.all %}
+            {% if item_image.is_main %}
+            <img src="{{ item_image.get_image_url }}" alt="{{ item_image.get_image_url }}"
                style="position: absolute; left: 0; top: 0; bottom: 0; right: 0; margin: auto; width: 100%;">
+            {% endif %}
+          {% endfor %}
         </div>
         <h4 style="border-bottom: 1px solid #CCC; padding-bottom: 10px">{{ item.name }}</h4>
         <p class="card-text">{{ item.text|truncatewords:4|safe }}</p>

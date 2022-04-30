@@ -15,12 +15,13 @@
   <div class="carousel-inner" id="carousel-inner">
     {% for item in items %}
 
-      <div class="carousel-item{% if item == items.first %} active{% endif %}"
+      <div class="carousel-item"
            data-bs-interval="4000"
            style="height: 400px; margin-bottom: 50px; ">
         <a href="{% url 'catalog' %}{{ item.id }}"
            style="text-decoration: none">
-          <div class="carousel-caption text-start text-white" style="display: flex; justify-content: space-between; height: 320px;">
+          <div class="carousel-caption text-start text-white"
+               style="display: flex; justify-content: space-between; height: 320px;">
             <div style="height: 180px; margin: auto 0">
 
               <h1>{{ item.name }}</h1>
@@ -36,7 +37,13 @@
               </div>
             </div>
             <div style="margin: auto 0">
-              <img src="{{ item.get_image_url }}" alt="{{ item.get_image_url }}" width="300px">
+              {% for item_image in item.item_gallery.all %}
+                {% if item_image.is_main %}
+                  <img src="{{ item_image.get_image_url }}"
+                       alt="{{ item_image.get_image_url }}"
+                       style="width: 300px;">
+                {% endif %}
+              {% endfor %}
             </div>
 
 

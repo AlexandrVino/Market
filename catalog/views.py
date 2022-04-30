@@ -19,12 +19,12 @@ class ItemListView(ListView):
 
     def get_queryset(self):
         return Item.manager.join_tags(
+            ImageGallery,
             Tag,
             None,
             "name",
             "text",
             "tags__name",
-            "main_image",
             "category__name",
             is_published=True,
         )
@@ -45,12 +45,12 @@ class ItemDetailView(DetailView):
 
     def get_queryset(self, **kwargs):
         return Item.manager.join_tag(
+            ImageGallery,
             Tag,
             "name",
             "text",
             "tags__name",
             "category__name",
-            "main_image",
             is_published=True,
         ).filter(is_published=True)
 
@@ -64,13 +64,12 @@ class ItemDetailView(DetailView):
             .aggregate(Avg("star"), Count("star"))
         )
 
-        gallery = ImageGallery.manager.get_objects_with_filter(
-            item_id=context["item"].id)
+        gallery = context['item'].item_gallery.all()
 
         context["rating"] = rating if rating["star__avg"] else ""
 
         context["gallery"] = gallery if gallery else []
-        context["range"] = range(len(gallery) + 1) if gallery else range(0)
+        context["range"] = range(len(gallery)) if gallery else range(0)
 
         return context
 

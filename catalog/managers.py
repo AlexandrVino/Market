@@ -7,18 +7,25 @@ User = get_user_model()
 
 
 class ItemsManager(BaseManager):
-    def join_tag(self, model, *args, **kwargs):
+    def join_tag(self, model_gallery, model_tag, *args, **kwargs):
         return (
             self.model.manager.select_related("category")
             .filter(category__is_published=True)
             .prefetch_related(
-                Prefetch("tags", queryset=model.manager.filter(**kwargs).only(
-                    "name"))
+                Prefetch(
+                    "tags",
+                    queryset=model_tag.manager.filter(**kwargs).only("name"))
             )
-            .only(*args)
+            .prefetch_related(
+                Prefetch(
+                    "item_gallery",
+                    queryset=model_gallery.manager.all()
+                )
+            )
         )
 
-    def join_tags(self, model, items=None, *args, **kwargs):
+    def join_tags(self, model_gallery, model_tag, items=None, *args, **kwargs):
+
         if items is None:
             items = self.get_objects_with_filter(**kwargs)
 
@@ -29,11 +36,16 @@ class ItemsManager(BaseManager):
             .prefetch_related(
                 Prefetch(
                     "tags",
-                    queryset=model.manager.filter(is_published=True).only(
+                    queryset=model_tag.manager.filter(is_published=True).only(
                         "name"),
                 )
             )
-            .only(*args)
+            .prefetch_related(
+                Prefetch(
+                    "item_gallery",
+                    queryset=model_gallery.manager.all()
+                )
+            )
         )
 
     def join_users(self, user, items=None, *args, **kwargs):
@@ -83,9 +95,7 @@ class ItemGalleryManager(BaseManager):
     добавится методы, которые будет он будет содержать
     """
 
-    def join_images(self, galleries=None, *args, **kwargs):
+    def join_items(self, galleries=None, *args, **kwargs):
         if galleries is None:
             galleries = self.get_objects_with_filter(**kwargs)
-        return galleries.prefetch_related(
-            Prefetch("item_gallery")
-        ).only(*args)
+        return galleries.select_related("item_gallery").only(*args)
