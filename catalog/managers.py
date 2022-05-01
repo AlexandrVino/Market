@@ -66,12 +66,12 @@ class ItemsManager(BaseManager):
             .only(*args)
         )
 
-    def get_favorite(self, user, tag_model, *args, **kwargs):
+    def get_favorite(self, user, gallery_model, tag_model, *args, **kwargs):
 
         return self.join_tags(
-            tag_model,
+            gallery_model, tag_model,
             items=self.get_objects_with_filter(
-                rating__user__exact=user, rating__star=5, **kwargs
+                item_rating__user__exact=user, item_rating__star=5, **kwargs
             ),
         )
 

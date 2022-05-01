@@ -18,7 +18,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView, ModelFormMixin
 from django.views.generic.list import ListView
 
-from catalog.models import Item, Tag
+from catalog.models import ImageGallery, Item, Tag
 from .backends import EmailAuthBackend, EmailUniqueFailed
 from .forms import EditProfileForm, LoginForm, RegisterForm
 
@@ -172,7 +172,8 @@ class ProfileView(TemplateView, ModelFormMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["items"] = Item.manager.get_favorite(self.object, Tag)
+        context["items"] = Item.manager.get_favorite(
+            self.object, ImageGallery, Tag)
         return context
 
     def post(self, request, *args, **kwargs):
